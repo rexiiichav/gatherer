@@ -1,3 +1,9 @@
+<ul>
+  <% for (let error of dependency.errors) { %>
+  <li><%= error.msg %></li>
+  <% } %>
+</ul>
+
 <form action="<%= dependency.url %>" method="POST">
   <h1><%= title %></h1>
   <label for="username">Username: </label>
