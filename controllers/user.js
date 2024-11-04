@@ -53,9 +53,8 @@ exports.sign_up_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
   dependency.url = "/user/signup";
   dependency.errors = [];
-  res.render("boilerplate", {
+  res.render("userform", {
     title: "Sign Up",
-    template: "userForm",
     dependency: dependency,
   });
 });
@@ -95,9 +94,8 @@ exports.login_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
   dependency.url = "/user/login";
   dependency.errors = [];
-  res.render("boilerplate", {
+  res.render("userform", {
     title: "Log In",
-    template: "userForm",
     dependency: dependency,
   });
 });
@@ -106,9 +104,8 @@ exports.login_failed_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
   dependency.url = "/user/login";
   dependency.errors = [{ msg: "Incorrect Username or Password" }];
-  res.render("boilerplate", {
+  res.render("userform", {
     title: "Log In",
-    template: "userForm",
     dependency: dependency,
   });
 });

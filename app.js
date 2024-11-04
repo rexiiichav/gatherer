@@ -89,6 +89,13 @@ const userRouter = require("./routes/user");
 //routers
 app.use("/user", userRouter);
 
+app.use("/", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.redirect("/dashboard");
+  } else {
+    res.redirect("/user/login");
+  }
+});
 app.use("*", (req, res, next) => res.send("404"));
 //confirmation log
 app.listen(PORT, () => console.log("app listening..."));
