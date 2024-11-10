@@ -85,9 +85,10 @@ const PORT = process.env.PORT || 5000;
 
 //import routers
 const userRouter = require("./routes/user");
-
+const recipeRouter = require("./routes/recipe");
 //routers
 app.use("/user", userRouter);
+app.use("/recipe", recipeRouter);
 
 app.use("/", (req, res, next) => {
   if (req.isAuthenticated()) {

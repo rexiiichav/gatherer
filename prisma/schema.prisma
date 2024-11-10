@@ -36,7 +36,14 @@ model Measure {
 model Recipe {
   id           Int           @id @default(autoincrement())
   name         String        @db.VarChar(50) @unique
-  ingredients  Ingredient[]     
+  ingredients  Ingredient[]   
+  list   List  @relation(fields: [listId], references: [id])
+  listId Int  
+}
+
+model List {
+  id           Int           @id @default(autoincrement())
+  recipes      Recipe[]     
 }
 
 model Ingredient {
