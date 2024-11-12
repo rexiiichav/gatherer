@@ -112,7 +112,7 @@ exports.login_failed_get = asyncHandler(async (req, res, next) => {
 
 exports.login_post = asyncHandler(async (req, res, next) => {
   passport.authenticate("local", {
-    successRedirect: "/",
+    successRedirect: "/recipe/index",
     failureRedirect: "/user/login/failed",
   })(req, res, next);
 });

@@ -1,0 +1,11 @@
+<%- include('navbar') %>
+
+<h1><%= title %></h1>
+
+<ol>
+  <% for (let recipe of dependency.recipes) { %>
+  <li><%= recipe.name %></li>
+  <% } %>
+</ol>
+
+<%- include('footer') %>

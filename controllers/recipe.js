@@ -30,14 +30,20 @@ exports.recipe_create_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
   dependency.url = "/recipe/new";
   dependency.errors = [];
-  res.render("boilerplate", {
+  dependency.ingredients = [];
+  const foods = await prisma.food.findMany({
+    include: {
+      measure: true,
+    },
+  });
+  dependency.foods = foods;
+  res.render("recipeform", {
     title: "New Recipe",
-    template: "recipeform",
     dependency: dependency,
   });
 });
 
-exports.recipe_show_get = asyncHandler(async (req, res, next) => {
+exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
   const recipe = await prisma.recipe.findUnique({
     where: {
       id: req.params.id,
@@ -48,9 +54,32 @@ exports.recipe_show_get = asyncHandler(async (req, res, next) => {
   });
   let dependency = {};
   dependency.recipe = recipe;
-  res.render("boilerplate", {
-    title: recipe.name,
+  res.render("recipeform", {
+    title: "Edit Recipe",
     template: "recipeform",
     dependency: dependency,
   });
+});
+
+exports.recipe_index_get = asyncHandler(async (req, res, next) => {
+  const recipes = await prisma.recipe.findMany();
+  let dependency = {};
+  dependency.recipes = recipes;
+  res.render("recipeindex", {
+    title: "All Recipes",
+    template: "recipeindex",
+    dependency: dependency,
+  });
+});
+
+exports.recipe_delete_put = asyncHandler(async (req, res, next) => {
+  await prisma.recipe.delete({
+    where: {
+      id: req.params.id,
+    },
+    include: {
+      ingredients: true,
+    },
+  });
+  res.redirect("/recipe/show");
 });
