@@ -1,0 +1,22 @@
+<%- include('navbar') %>
+
+<form action="<%= dependency.url %>" method="POST">
+  <h1><%= title %></h1>
+  <% for (let recipe of dependency.recipes) { %>
+  <br />
+  <label for="<%= recipe.id %>"><%= recipe.name %></label>
+  <input
+    type="number"
+    name="<%= recipe.id %>"
+    id="<%= recipe.id %>"
+    value="0"
+    max="9"
+    min="0"
+    required
+  />
+  <% } %>
+  <br />
+  <button id="submit">Submit</button>
+</form>
+
+<%- include('footer') %>

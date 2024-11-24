@@ -7,25 +7,6 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
-const validateSignUp = [
-  body("username")
-    .trim()
-    .matches(/^[a-z0-9 ]+$/i)
-    .withMessage(`Name Cannot Contain Non-Alphanumeric Characters`)
-    .isLength({ min: 1, max: 100 })
-    .withMessage(`Must Be Between 1 and 100 Characters`),
-  body("password")
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .withMessage(`Must Be Between 1 and 100 Characters`),
-  body("confirmPassword")
-    .trim()
-    .custom((value, { req }) => {
-      return value == req.body.password;
-    })
-    .withMessage("Passwords must match"),
-];
-
 exports.recipe_create_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
   dependency.url = "/recipe/new";
@@ -35,6 +16,11 @@ exports.recipe_create_get = asyncHandler(async (req, res, next) => {
     include: {
       measure: true,
     },
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
   });
   dependency.foods = foods;
   res.render("recipeform", {
@@ -43,22 +29,105 @@ exports.recipe_create_get = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.recipe_create_post = asyncHandler(async (req, res, next) => {
+  let recipe = await prisma.recipe.create({
+    data: {
+      name: req.body.name,
+    },
+  });
+  for (let i in req.body) {
+    if (i !== "name") {
+      let food = await prisma.food.findUnique({
+        where: { name: req.body[i][0] },
+      });
+      let ingredient = await prisma.ingredient.create({
+        data: {
+          foodId: food.id,
+          recipeId: recipe.id,
+          quantity: Number(req.body[i][1]),
+        },
+      });
+      await prisma.recipe.update({
+        where: { name: req.body.name },
+        data: { ingredients: { connect: { id: ingredient.id } } },
+      });
+    }
+  }
+  res.redirect("/recipe/index");
+});
+
 exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
   const recipe = await prisma.recipe.findUnique({
     where: {
-      id: req.params.id,
+      id: Number(req.params.id),
+    },
+  });
+  const ingredients = await prisma.ingredient.findMany({
+    where: {
+      recipeId: Number(req.params.id),
     },
     include: {
-      ingredients: true,
+      food: true,
     },
+  });
+  const foods = await prisma.food.findMany({
+    include: {
+      measure: true,
+    },
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
   });
   let dependency = {};
   dependency.recipe = recipe;
+  dependency.foods = foods;
+  dependency.errors = [];
+  dependency.ingredients = ingredients;
+  console.log(dependency.ingredients);
   res.render("recipeform", {
     title: "Edit Recipe",
     template: "recipeform",
     dependency: dependency,
   });
+});
+
+exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
+  let recipe = await prisma.recipe.update({
+    where: { id: Number(req.params.id) },
+    data: {
+      name: req.body.name,
+    },
+  });
+  await prisma.ingredient.deleteMany({
+    where: { recipeId: recipe.id },
+  });
+  for (let i in req.body) {
+    if (i !== "name") {
+      let food = await prisma.food.findUnique({
+        where: { name: req.body[i][0] },
+      });
+      let ingredient = await prisma.ingredient.create({
+        data: {
+          foodId: food.id,
+          recipeId: recipe.id,
+          quantity: Number(req.body[i][1]),
+        },
+      });
+      await prisma.recipe.update({
+        where: { name: req.body.name },
+        data: { ingredients: { connect: { id: ingredient.id } } },
+      });
+    }
+  }
+  console.log(
+    await prisma.recipe.findUnique({
+      where: { id: recipe.id },
+      include: { ingredients: true },
+    })
+  );
+  res.redirect("/recipe/index");
 });
 
 exports.recipe_index_get = asyncHandler(async (req, res, next) => {
@@ -72,7 +141,7 @@ exports.recipe_index_get = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.recipe_delete_put = asyncHandler(async (req, res, next) => {
+exports.recipe_delete_post = asyncHandler(async (req, res, next) => {
   await prisma.recipe.delete({
     where: {
       id: req.params.id,

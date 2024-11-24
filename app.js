@@ -86,17 +86,13 @@ const PORT = process.env.PORT || 5000;
 //import routers
 const userRouter = require("./routes/user");
 const recipeRouter = require("./routes/recipe");
+const listRouter = require("./routes/list");
+
 //routers
 app.use("/user", userRouter);
 app.use("/recipe", recipeRouter);
+app.use("/list", listRouter);
 
-app.use("/", (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.redirect("/dashboard");
-  } else {
-    res.redirect("/user/login");
-  }
-});
 app.use("*", (req, res, next) => res.send("404"));
 //confirmation log
 app.listen(PORT, () => console.log("app listening..."));

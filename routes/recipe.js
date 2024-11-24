@@ -12,13 +12,13 @@ function protectRoute(req, res, next) {
 
 //routes
 router.get("/new", protectRoute, controller.recipe_create_get);
-// router.put("/new", protectRoute, controller.recipe_create_put);
+router.post("/new", protectRoute, controller.recipe_create_post);
 
 router.get("/index", protectRoute, controller.recipe_index_get);
 
 router.get("/edit/:id", protectRoute, controller.recipe_edit_get);
-// router.put("/edit/:id", protectRoute, controller.recipe_edit_put);
+router.post("/edit/:id", protectRoute, controller.recipe_edit_post);
 
-router.put("/delete/:id", protectRoute, controller.recipe_delete_put);
+router.post("/delete/:id", protectRoute, controller.recipe_delete_post);
 
 module.exports = router;
