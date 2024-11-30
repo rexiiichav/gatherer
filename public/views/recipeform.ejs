@@ -8,7 +8,7 @@
 
 <form action="<%= dependency.url %>" method="POST">
   <h1><%= title %></h1>
-  <% if (title != "Grocery List") { %>
+  <% if (title != "Edit Grocery List") { %>
   <label for="name">Name: </label>
   <input
     type="text"
@@ -20,7 +20,7 @@
   <% } %>
   <div id="ingredientInput">
     <% let index = 0; %> <% for (let ingredient of dependency.ingredients) { %>
-    <div>
+    <div id="<%=index%>">
       <select name="<%=index%>" required>
         <% for (let food of dependency.foods) { %> <% if (food.id ==
         ingredient.foodId) { %>
@@ -38,12 +38,19 @@
         name="<%=index%>"
         value="<%= ingredient.quantity %>"
       />
+      <button class="delete">Delete Ingredient</button>
     </div>
     <% index++ %> <% } %>
   </div>
   <button id="addIngredient">Add Ingredient</button>
   <button id="submit">Submit</button>
 </form>
+
+<% if (title == "Edit Recipe") { %>
+<form action="/recipe/delete/<%= dependency.recipe.id %>" method="POST">
+  <button id="delete">Delete</button>
+</form>
+<% } %>
 
 <script>
   const ingredientInput = document.getElementById("ingredientInput");
@@ -81,7 +88,32 @@
     input.setAttribute("required", "required");
     input.setAttribute("name", `${index}`);
     div.appendChild(input);
+
+
+    let deleteButton = document.createElement("button");
+    deleteButton.innerText = 'Delete Ingredient';
+    deleteButton.classList.add('delete');
+    div.appendChild(deleteButton);
+
+    let deleteButtons = document.querySelectorAll("button.delete");
+    deleteButtons.forEach((b) => {
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      b.parentElement.remove();
+    });
+  });
+
     index++;
+  });
+</script>
+
+<script>
+  let deleteButton = document.querySelectorAll("button.delete");
+  deleteButton.forEach((b) => {
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      b.parentElement.remove();
+    });
   });
 </script>
 

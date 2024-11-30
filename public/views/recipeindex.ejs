@@ -4,7 +4,11 @@
 
 <ol>
   <% for (let recipe of dependency.recipes) { %>
-  <li><%= recipe.name %></li>
+  <li>
+    <%= recipe.name %>
+    <a href="/recipe/edit/<%= recipe.id %>"><button>Edit</button></a>
+  </li>
+  <br />
   <% } %>
 </ol>
 

@@ -66,7 +66,7 @@ app.use(express.static("public"));
 app.use(
   session({
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      maxAge: 24 * 60 * 60, // ms
     },
     secret: process.env.COOKIE_SECRET,
     resave: true,
@@ -92,6 +92,13 @@ const listRouter = require("./routes/list");
 app.use("/user", userRouter);
 app.use("/recipe", recipeRouter);
 app.use("/list", listRouter);
+app.get("/", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.redirect("/recipe/index");
+  } else {
+    res.redirect("/user/login");
+  }
+});
 
 app.use("*", (req, res, next) => res.send("404"));
 //confirmation log

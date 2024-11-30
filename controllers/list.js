@@ -72,9 +72,25 @@ exports.list_create_post = asyncHandler(async (req, res, next) => {
   dependency.errors = [];
   dependency.ingredients = ingredients;
   dependency.foods = foods;
-  res.render("recipeform", { title: "Grocery List", dependency: dependency });
+  res.render("recipeform", {
+    title: "Edit Grocery List",
+    dependency: dependency,
+  });
 });
 
 exports.list_edit_post = asyncHandler(async (req, res, next) => {
-  console.log(req.body);
+  let foods = [];
+  for (let ingredient in req.body) {
+    let food = await prisma.food.findUnique({
+      where: {
+        name: req.body[ingredient][0],
+      },
+      include: {
+        measure: true,
+      },
+    });
+    food.quantity = req.body[ingredient][1];
+    foods.push(food);
+  }
+  res.render("listshow", { title: "Grocery List", foods: foods });
 });

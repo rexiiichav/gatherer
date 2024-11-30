@@ -6,7 +6,7 @@ function protectRoute(req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.redirect("/admin/login");
+    res.redirect("/user/login");
   }
 }
 

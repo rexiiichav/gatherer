@@ -85,7 +85,6 @@ exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
   dependency.foods = foods;
   dependency.errors = [];
   dependency.ingredients = ingredients;
-  console.log(dependency.ingredients);
   res.render("recipeform", {
     title: "Edit Recipe",
     template: "recipeform",
@@ -142,13 +141,15 @@ exports.recipe_index_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.recipe_delete_post = asyncHandler(async (req, res, next) => {
-  await prisma.recipe.delete({
+  await prisma.ingredient.deleteMany({
     where: {
-      id: req.params.id,
-    },
-    include: {
-      ingredients: true,
+      recipeId: Number(req.params.id),
     },
   });
-  res.redirect("/recipe/show");
+  await prisma.recipe.delete({
+    where: {
+      id: Number(req.params.id),
+    },
+  });
+  res.redirect("/recipe/index");
 });

@@ -1,0 +1,13 @@
+<%- include('navbar') %>
+
+<h1><%= title %></h1>
+
+<ul>
+  <% for (let food of foods) { %>
+  <li>
+    <%= `${food.name}: ` + `${food.quantity}` + ` ${food.measure.name}` %>
+  </li>
+  <% } %>
+</ul>
+
+<%- include('footer') %>
