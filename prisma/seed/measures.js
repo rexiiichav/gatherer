@@ -7,6 +7,8 @@ async function measures() {
     update: {},
     create: {
       name: "Teaspoon(s)",
+      aggregateByVolume: true,
+      conversion: 1 / 48,
     },
   });
 
@@ -15,6 +17,8 @@ async function measures() {
     update: {},
     create: {
       name: "Tablespoon(s)",
+      aggregateByVolume: true,
+      conversion: 1 / 16,
     },
   });
 
@@ -23,14 +27,38 @@ async function measures() {
     update: {},
     create: {
       name: "Cup(s)",
+      aggregateByVolume: true,
+      conversion: 1,
     },
   });
 
   await prisma.measure.upsert({
-    where: { name: "Ounce(s)" },
+    where: { name: "Fluid Ounce(s)" },
     update: {},
     create: {
-      name: "Ounce(s)",
+      name: "Fluid Ounce(s)",
+      aggregateByVolume: true,
+      conversion: 1 / 8,
+    },
+  });
+
+  await prisma.measure.upsert({
+    where: { name: "Quart(s)" },
+    update: {},
+    create: {
+      name: "Quart(s)",
+      aggregateByVolume: true,
+      conversion: 4,
+    },
+  });
+
+  await prisma.measure.upsert({
+    where: { name: "Gallon(s)" },
+    update: {},
+    create: {
+      name: "Gallon(s)",
+      aggregateByVolume: true,
+      conversion: 16,
     },
   });
 
@@ -39,30 +67,8 @@ async function measures() {
     update: {},
     create: {
       name: "Gram(s)",
-    },
-  });
-
-  await prisma.measure.upsert({
-    where: { name: "Can(s)" },
-    update: {},
-    create: {
-      name: "Can(s)",
-    },
-  });
-
-  await prisma.measure.upsert({
-    where: { name: "Item(s)" },
-    update: {},
-    create: {
-      name: "Item(s)",
-    },
-  });
-
-  await prisma.measure.upsert({
-    where: { name: "Package(s)" },
-    update: {},
-    create: {
-      name: "Package(s)",
+      aggregateByWeight: true,
+      conversion: 1 / 453.592,
     },
   });
 
@@ -71,6 +77,35 @@ async function measures() {
     update: {},
     create: {
       name: "Pound(s)",
+      aggregateByWeight: true,
+      conversion: 1,
+    },
+  });
+
+  await prisma.measure.upsert({
+    where: { name: "Can(s)" },
+    update: {},
+    create: {
+      name: "Can(s)",
+      conversion: 1,
+    },
+  });
+
+  await prisma.measure.upsert({
+    where: { name: "Item(s)" },
+    update: {},
+    create: {
+      name: "Item(s)",
+      conversion: 1,
+    },
+  });
+
+  await prisma.measure.upsert({
+    where: { name: "Package(s)" },
+    update: {},
+    create: {
+      name: "Package(s)",
+      conversion: 1,
     },
   });
 
@@ -79,6 +114,7 @@ async function measures() {
     update: {},
     create: {
       name: "Fruit(s)",
+      conversion: 1,
     },
   });
 
@@ -87,6 +123,7 @@ async function measures() {
     update: {},
     create: {
       name: "Vegetable(s)",
+      conversion: 1,
     },
   });
 }

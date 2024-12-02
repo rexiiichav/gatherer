@@ -14,7 +14,7 @@ exports.recipe_create_get = asyncHandler(async (req, res, next) => {
   dependency.ingredients = [];
   const foods = await prisma.food.findMany({
     include: {
-      measure: true,
+      location: true,
     },
     orderBy: [
       {
@@ -23,6 +23,14 @@ exports.recipe_create_get = asyncHandler(async (req, res, next) => {
     ],
   });
   dependency.foods = foods;
+  const measures = await prisma.measure.findMany({
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
+  });
+  dependency.measures = measures;
   res.render("recipeform", {
     title: "New Recipe",
     dependency: dependency,
@@ -40,11 +48,15 @@ exports.recipe_create_post = asyncHandler(async (req, res, next) => {
       let food = await prisma.food.findUnique({
         where: { name: req.body[i][0] },
       });
+      let measure = await prisma.measure.findUnique({
+        where: { name: req.body[i][2] },
+      });
       let ingredient = await prisma.ingredient.create({
         data: {
           foodId: food.id,
           recipeId: recipe.id,
           quantity: Number(req.body[i][1]),
+          measureId: measure.id,
         },
       });
       await prisma.recipe.update({
@@ -68,12 +80,17 @@ exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
     },
     include: {
       food: true,
+      measure: true,
     },
   });
   const foods = await prisma.food.findMany({
-    include: {
-      measure: true,
-    },
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
+  });
+  const measures = await prisma.measure.findMany({
     orderBy: [
       {
         name: "asc",
@@ -85,6 +102,7 @@ exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
   dependency.foods = foods;
   dependency.errors = [];
   dependency.ingredients = ingredients;
+  dependency.measures = measures;
   res.render("recipeform", {
     title: "Edit Recipe",
     template: "recipeform",
@@ -107,11 +125,15 @@ exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
       let food = await prisma.food.findUnique({
         where: { name: req.body[i][0] },
       });
+      let measure = await prisma.measure.findUnique({
+        where: { name: req.body[i][2] },
+      });
       let ingredient = await prisma.ingredient.create({
         data: {
           foodId: food.id,
           recipeId: recipe.id,
           quantity: Number(req.body[i][1]),
+          measureId: measure.id,
         },
       });
       await prisma.recipe.update({
@@ -120,17 +142,17 @@ exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
       });
     }
   }
-  console.log(
-    await prisma.recipe.findUnique({
-      where: { id: recipe.id },
-      include: { ingredients: true },
-    })
-  );
   res.redirect("/recipe/index");
 });
 
 exports.recipe_index_get = asyncHandler(async (req, res, next) => {
-  const recipes = await prisma.recipe.findMany();
+  const recipes = await prisma.recipe.findMany({
+    orderBy: [
+      {
+        name: "asc",
+      },
+    ],
+  });
   let dependency = {};
   dependency.recipes = recipes;
   res.render("recipeindex", {
