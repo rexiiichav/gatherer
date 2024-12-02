@@ -31,6 +31,7 @@
       </select>
       <input
         type="number"
+        step=".01"
         name="<%=index%>"
         value="<%= ingredient.quantity %>"
       />
@@ -92,6 +93,7 @@
     }
     let input = document.createElement("Input");
     input.type = "number";
+    input.step = ".01";
     input.setAttribute("required", "required");
     input.setAttribute("name", `${index}`);
     div.appendChild(input);

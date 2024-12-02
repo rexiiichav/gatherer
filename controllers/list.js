@@ -31,7 +31,7 @@ exports.list_create_post = asyncHandler(async (req, res, next) => {
   let ingredients = await listIngredients(chosenRecipes);
   ingredients = await convertIngredients(ingredients);
   // ingredients = consolidateIngredients(ingredients);
-  // ingredients = fixMeasures(ingredients);
+  ingredients = await fixMeasures(ingredients);
   const foods = await prisma.food.findMany({
     orderBy: [
       {
@@ -115,13 +115,15 @@ async function listIngredients(recipes) {
 }
 
 async function convertIngredients(ingredients) {
-  let cups = await prisma.measure.findUnique({ where: { name: "Cup(s)" } });
+  let gallons = await prisma.measure.findUnique({
+    where: { name: "Gallon(s)" },
+  });
   let pounds = await prisma.measure.findUnique({ where: { name: "Pound(s)" } });
   for (ingredient of ingredients) {
     ingredient.quantity = ingredient.quantity * ingredient.measure.conversion;
     if (ingredient.measure.aggregateByVolume) {
-      ingredient.measureId = cups.id;
-      ingredient.measure = cups;
+      ingredient.measureId = gallons.id;
+      ingredient.measure = gallons;
     } else if (ingredient.measure.aggregateByWeight) {
       ingredient.measureId = pounds.id;
       ingredient.measure = pounds;
@@ -148,4 +150,57 @@ function consolidateIngredients(ingredients) {
   }
 }
 
-async function fixMeasures(ingredients) {}
+async function fixMeasures(ingredients) {
+  let byVolume = await prisma.measure.findMany({
+    where: { aggregateByVolume: true },
+    orderBy: [
+      {
+        conversion: "desc",
+      },
+    ],
+  });
+  let byWeight = await prisma.measure.findMany({
+    where: { aggregateByWeight: true },
+    orderBy: [
+      {
+        conversion: "desc",
+      },
+    ],
+  });
+  for (ingredient of ingredients) {
+    if (ingredient.measure.aggregateByVolume) {
+      for (measure in byVolume) {
+        let calc = ingredient.quantity / byVolume[measure].conversion;
+        calc = calc.toFixed(2);
+        if (
+          (calc >= 0.95 && calc % 0.25 == 0) ||
+          byVolume[measure].name == "Teaspoon(s)"
+        ) {
+          ingredient.quantity = (
+            ingredient.quantity / byVolume[measure].conversion
+          ).toFixed(2);
+          ingredient.measure = byVolume[measure];
+          ingredient.measureId = byVolume[measure].id;
+          break;
+        }
+      }
+    } else if (ingredient.measure.aggregateByWeight) {
+      for (measure in byWeight) {
+        let calc = ingredient.quantity / byWeight[measure].conversion;
+        calc = calc.toFixed(2);
+        if (
+          (calc >= 0.25 && calc % 0.25 == 0) ||
+          byWeight[measure].name == "Gram(s)"
+        ) {
+          ingredient.quantity = (
+            ingredient.quantity / byWeight[measure].conversion
+          ).toFixed(2);
+          ingredient.measure = byWeight[measure];
+          ingredient.measureId = byWeight[measure].id;
+          break;
+        }
+      }
+    }
+  }
+  return ingredients;
+}

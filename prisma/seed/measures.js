@@ -8,7 +8,7 @@ async function measures() {
     create: {
       name: "Teaspoon(s)",
       aggregateByVolume: true,
-      conversion: 1 / 48,
+      conversion: 1 / 768,
     },
   });
 
@@ -18,7 +18,7 @@ async function measures() {
     create: {
       name: "Tablespoon(s)",
       aggregateByVolume: true,
-      conversion: 1 / 16,
+      conversion: 1 / 256,
     },
   });
 
@@ -28,7 +28,7 @@ async function measures() {
     create: {
       name: "Cup(s)",
       aggregateByVolume: true,
-      conversion: 1,
+      conversion: 1 / 16,
     },
   });
 
@@ -38,7 +38,7 @@ async function measures() {
     create: {
       name: "Fluid Ounce(s)",
       aggregateByVolume: true,
-      conversion: 1 / 8,
+      conversion: 1 / 128,
     },
   });
 
@@ -48,7 +48,7 @@ async function measures() {
     create: {
       name: "Quart(s)",
       aggregateByVolume: true,
-      conversion: 4,
+      conversion: 1 / 4,
     },
   });
 
@@ -58,7 +58,7 @@ async function measures() {
     create: {
       name: "Gallon(s)",
       aggregateByVolume: true,
-      conversion: 16,
+      conversion: 1,
     },
   });
 
