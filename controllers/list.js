@@ -2,10 +2,6 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const path = require("path");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
 
 exports.list_create_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
@@ -30,7 +26,7 @@ exports.list_create_post = asyncHandler(async (req, res, next) => {
   let chosenRecipes = listChosenRecipes(req.body);
   let ingredients = await listIngredients(chosenRecipes);
   ingredients = await convertIngredients(ingredients);
-  // ingredients = consolidateIngredients(ingredients);
+  ingredients = consolidateIngredients(ingredients, []);
   ingredients = await fixMeasures(ingredients);
   const foods = await prisma.food.findMany({
     orderBy: [
@@ -132,22 +128,24 @@ async function convertIngredients(ingredients) {
   return ingredients;
 }
 
-function consolidateIngredients(ingredients) {
-  let list = [];
-  for (ingredient of ingredients) {
-    let matchedIngredients = ingredients.filter((i) => {
-      i.foodId == ingredient.foodId && i.id != ingredient.id;
-    });
-    for (match of matchedIngredients) {
-      if (
-        (match.aggregateByVolume && ingredient.aggregateByVolume) ||
-        (match.aggregateByWeight && ingredient.aggregateByWeight) ||
-        match.measure.id == ingredient.measure.id
-      ) {
-        ingredient.quantity = ingredient.quantity + match.quantity;
-      }
+function consolidateIngredients(ingredients, list) {
+  if (ingredients.length == 0) {
+    return list;
+  }
+  let unconsolidatedIngredients = [];
+  for (let i = 1; i < ingredients.length; i++) {
+    if (
+      ingredients[i].foodId == ingredients[0].foodId &&
+      ingredients[i].measureId == ingredients[0].measureId
+    ) {
+      ingredients[0].quantity =
+        ingredients[0].quantity + ingredients[i].quantity;
+    } else {
+      unconsolidatedIngredients.push(ingredients[i]);
     }
   }
+  list.push(ingredients[0]);
+  return consolidateIngredients(unconsolidatedIngredients, list);
 }
 
 async function fixMeasures(ingredients) {

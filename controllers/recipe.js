@@ -2,10 +2,6 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const path = require("path");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
 
 exports.recipe_create_get = asyncHandler(async (req, res, next) => {
   let dependency = {};
