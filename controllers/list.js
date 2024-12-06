@@ -66,10 +66,16 @@ exports.list_edit_post = asyncHandler(async (req, res, next) => {
       },
     });
     food.quantity = req.body[ingredient][1];
-    food.measure = {};
-    food.measure.name = req.body[ingredient][2];
+    food.measure = await prisma.measure.findUnique({
+      where: { name: req.body[ingredient][2] },
+    });
+    food.foodId = food.id;
+    food.measureId = food.measure.id;
     foods.push(food);
   }
+  foods = await convertIngredients(foods);
+  foods = await consolidateIngredients(foods, []);
+  foods = await fixMeasures(foods);
   //Sort alphabetically
   foods = foods.sort((a, b) => b.name.localeCompare(a.name));
   let locations = await prisma.location.findMany({});
@@ -83,6 +89,7 @@ exports.list_edit_post = asyncHandler(async (req, res, next) => {
 //utility
 
 function listChosenRecipes(recipes) {
+  //remove all recipes that were not chosen
   for (recipe in recipes) {
     if (recipes[recipe] == 0) {
       delete recipes[recipe];
