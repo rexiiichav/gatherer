@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -27,6 +27,7 @@
     "pg": "^8.13.1"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "prisma": "^5.22.0"
   }
 }

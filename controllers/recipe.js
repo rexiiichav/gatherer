@@ -27,7 +27,7 @@ exports.recipe_create_get = asyncHandler(async (req, res, next) => {
     ],
   });
   dependency.measures = measures;
-  res.render("recipeform", {
+  res.render("recipeformcopy", {
     title: "New Recipe",
     dependency: dependency,
   });
@@ -99,7 +99,7 @@ exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
   dependency.errors = [];
   dependency.ingredients = ingredients;
   dependency.measures = measures;
-  res.render("recipeform", {
+  res.render("recipeformcopy", {
     title: "Edit Recipe",
     template: "recipeform",
     dependency: dependency,
