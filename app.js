@@ -4,6 +4,30 @@ const path = require("path");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
+var JwtStrategy = require("passport-jwt").Strategy,
+  ExtractJwt = require("passport-jwt").ExtractJwt;
+require("dotenv").config();
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.COOKIE_SECRET,
+};
+
+passport.use(
+  new JwtStrategy(opts, async (payload, done) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          username: payload.username,
+        },
+      });
+      if (user) return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
+  })
+);
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -16,7 +40,6 @@ passport.deserializeUser(async (id, done) => {
         id: id,
       },
     });
-
     done(null, user);
   } catch (err) {
     done(err);
@@ -25,6 +48,8 @@ passport.deserializeUser(async (id, done) => {
 
 //setup express
 const app = express();
+var cors = require("cors");
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,9 +66,15 @@ app.use("/recipe", recipeRouter);
 app.use("/list", listRouter);
 app.get("/", (req, res, next) => {
   if (req.isAuthenticated()) {
-    res.redirect("/recipe/index");
+    res.status(200).json({
+      message: "Auth Passed",
+      token,
+    });
   } else {
-    res.redirect("/user/login");
+    rres.status(401).json({
+      message: "Auth Failed",
+      token,
+    });
   }
 });
 
