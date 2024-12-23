@@ -29,23 +29,6 @@ passport.use(
   })
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
-
 //setup express
 const app = express();
 var cors = require("cors");
@@ -64,19 +47,6 @@ const listRouter = require("./routes/list");
 app.use("/user", userRouter);
 app.use("/recipe", recipeRouter);
 app.use("/list", listRouter);
-app.get("/", (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.status(200).json({
-      message: "Auth Passed",
-      token,
-    });
-  } else {
-    rres.status(401).json({
-      message: "Auth Failed",
-      token,
-    });
-  }
-});
 
 app.use("*", (req, res, next) => res.send("404"));
 //confirmation log

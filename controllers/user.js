@@ -6,26 +6,27 @@ const path = require("path");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+var JwtStrategy = require("passport-jwt").Strategy,
+  ExtractJwt = require("passport-jwt").ExtractJwt;
+require("dotenv").config();
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.COOKIE_SECRET,
+};
 
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
+  new JwtStrategy(opts, async (payload, done) => {
     try {
       const user = await prisma.user.findUnique({
         where: {
-          username: username,
+          username: payload.username,
         },
       });
-      if (!user) {
-        return done(null, false, { message: "Incorrect username" });
-      }
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        // passwords do not match!
-        return done(null, false, { message: "Incorrect password" });
-      }
-      return done(null, user);
-    } catch (err) {
-      return done(err);
+      if (user) return done(null, user);
+    } catch (error) {
+      return done(error);
     }
   })
 );
@@ -49,29 +50,12 @@ const validateSignUp = [
     .withMessage("Passwords must match"),
 ];
 
-exports.sign_up_get = asyncHandler(async (req, res, next) => {
-  let dependency = {};
-  dependency.url = "/user/signup";
-  dependency.errors = [];
-  res.render("userform", {
-    title: "Sign Up",
-    dependency: dependency,
-  });
-});
-
 exports.sign_up_post = [
   validateSignUp,
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      let dependency = {};
-      dependency.url = "/user/signup";
-      dependency.errors = errors.errors;
-      res.render("boilerplate", {
-        title: "Sign Up",
-        template: "userForm",
-        dependency: dependency,
-      });
+      res.status(409).json({ errors: errors.errors });
     } else {
       bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         try {
@@ -85,43 +69,30 @@ exports.sign_up_post = [
           next(err);
         }
       });
-      res.redirect("/user/login");
+      res.status(200).json({});
     }
   }),
 ];
 
-exports.login_get = asyncHandler(async (req, res, next) => {
-  let dependency = {};
-  dependency.url = "/user/login";
-  dependency.errors = [];
-  res.render("userform", {
-    title: "Log In",
-    dependency: dependency,
-  });
-});
-
-exports.login_failed_get = asyncHandler(async (req, res, next) => {
-  let dependency = {};
-  dependency.url = "/user/login";
-  dependency.errors = [{ msg: "Incorrect Username or Password" }];
-  res.render("userform", {
-    title: "Log In",
-    dependency: dependency,
-  });
-});
-
 exports.login_post = asyncHandler(async (req, res, next) => {
-  passport.authenticate("local", {
-    successRedirect: "/recipe/index",
-    failureRedirect: "/user/login/failed",
-  })(req, res, next);
-});
-
-exports.logout_post = asyncHandler(async (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/user/login");
+  let { username, password } = req.body;
+  const user = await prisma.user.findUnique({
+    where: {
+      username: username,
+    },
+  });
+  if (!user) {
+    return res.status(401).json({ message: "Auth Failed" });
+  }
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    return res.status(401).json({ message: "Auth Failed" });
+  }
+  opts.expiresIn = 600;
+  const secret = process.env.COOKIE_SECRET;
+  const token = jwt.sign({ username }, secret, opts);
+  return res.status(200).json({
+    message: "Auth Passed",
+    token,
   });
 });
