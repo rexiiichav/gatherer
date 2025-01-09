@@ -4,16 +4,8 @@ const controller = require("../controllers/user");
 
 //routes
 
-router.post(
-  "/signup",
-  passport.authenticate("jwt", { session: false }),
-  controller.sign_up_post
-);
+router.post("/signup", controller.sign_up_post);
 
-router.post(
-  "/login",
-  passport.authenticate("jwt", { session: false }),
-  controller.login_post
-);
+router.post("/login", controller.login_post);
 
 module.exports = router;

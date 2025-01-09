@@ -1,18 +1,15 @@
 var express = require("express");
 var router = express.Router();
 const controller = require("../controllers/recipe");
+const passport = require("passport");
 
 //routes
-// router.get(
-//   "/new",
-//   passport.authenticate("jwt", { session: false }),
-//   controller.recipe_create_get
-// );
-// router.post(
-//   "/new",
-//   passport.authenticate("jwt", { session: false }),
-//   controller.recipe_create_post
-// );
+
+router.post(
+  "/new",
+  passport.authenticate("jwt", { session: false }),
+  controller.recipe_create_post
+);
 
 // router.get(
 //   "/index",

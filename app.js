@@ -9,10 +9,9 @@ var JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 require("dotenv").config();
 
-const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.COOKIE_SECRET,
-};
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = "secret";
 
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
@@ -30,11 +29,11 @@ passport.use(
 );
 
 //setup express
-const app = express();
 var cors = require("cors");
-app.use(cors());
+const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 

@@ -3,36 +3,6 @@ const { body, validationResult } = require("express-validator");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-exports.recipe_create_get = asyncHandler(async (req, res, next) => {
-  let dependency = {};
-  dependency.url = "/recipe/new";
-  dependency.errors = [];
-  dependency.ingredients = [];
-  const foods = await prisma.food.findMany({
-    include: {
-      location: true,
-    },
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  dependency.foods = foods;
-  const measures = await prisma.measure.findMany({
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  dependency.measures = measures;
-  res.render("recipeformcopy", {
-    title: "New Recipe",
-    dependency: dependency,
-  });
-});
-
 exports.recipe_create_post = asyncHandler(async (req, res, next) => {
   let recipe = await prisma.recipe.create({
     data: {
@@ -62,48 +32,6 @@ exports.recipe_create_post = asyncHandler(async (req, res, next) => {
     }
   }
   res.redirect("/recipe/index");
-});
-
-exports.recipe_edit_get = asyncHandler(async (req, res, next) => {
-  const recipe = await prisma.recipe.findUnique({
-    where: {
-      id: Number(req.params.id),
-    },
-  });
-  const ingredients = await prisma.ingredient.findMany({
-    where: {
-      recipeId: Number(req.params.id),
-    },
-    include: {
-      food: true,
-      measure: true,
-    },
-  });
-  const foods = await prisma.food.findMany({
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  const measures = await prisma.measure.findMany({
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  let dependency = {};
-  dependency.recipe = recipe;
-  dependency.foods = foods;
-  dependency.errors = [];
-  dependency.ingredients = ingredients;
-  dependency.measures = measures;
-  res.render("recipeformcopy", {
-    title: "Edit Recipe",
-    template: "recipeform",
-    dependency: dependency,
-  });
 });
 
 exports.recipe_edit_post = asyncHandler(async (req, res, next) => {

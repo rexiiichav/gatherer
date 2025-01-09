@@ -11,10 +11,9 @@ var JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 require("dotenv").config();
 
-const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.COOKIE_SECRET,
-};
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = "secret";
 
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
@@ -54,6 +53,7 @@ exports.sign_up_post = [
   validateSignUp,
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
+    console.log(req.body);
     if (!errors.isEmpty()) {
       res.status(409).json({ errors: errors.errors });
     } else {
@@ -69,7 +69,7 @@ exports.sign_up_post = [
           next(err);
         }
       });
-      res.status(200).json({});
+      res.status(200).json({ message: "Success" });
     }
   }),
 ];
@@ -78,7 +78,7 @@ exports.login_post = asyncHandler(async (req, res, next) => {
   let { username, password } = req.body;
   const user = await prisma.user.findUnique({
     where: {
-      username: username,
+      username: req.body.username,
     },
   });
   if (!user) {
@@ -88,11 +88,12 @@ exports.login_post = asyncHandler(async (req, res, next) => {
   if (!match) {
     return res.status(401).json({ message: "Auth Failed" });
   }
-  opts.expiresIn = 600;
+  let opt = {};
+  opt.expiresIn = 600;
   const secret = process.env.COOKIE_SECRET;
-  const token = jwt.sign({ username }, secret, opts);
+  const token = jwt.sign({ username }, secret, opt);
   return res.status(200).json({
-    message: "Auth Passed",
+    message: "Success",
     token,
   });
 });
