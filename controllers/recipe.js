@@ -4,34 +4,27 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 exports.recipe_create_post = asyncHandler(async (req, res, next) => {
+  //-d '{"name": "Foodzs", "ingredients": [{"foodId": 76, "measureId": 64, "quantity": 3}] }'
   let recipe = await prisma.recipe.create({
     data: {
       name: req.body.name,
     },
   });
-  for (let i in req.body) {
-    if (i !== "name") {
-      let food = await prisma.food.findUnique({
-        where: { name: req.body[i][0] },
-      });
-      let measure = await prisma.measure.findUnique({
-        where: { name: req.body[i][2] },
-      });
-      let ingredient = await prisma.ingredient.create({
-        data: {
-          foodId: food.id,
-          recipeId: recipe.id,
-          quantity: Number(req.body[i][1]),
-          measureId: measure.id,
-        },
-      });
-      await prisma.recipe.update({
-        where: { name: req.body.name },
-        data: { ingredients: { connect: { id: ingredient.id } } },
-      });
-    }
+  for (let ing of req.body.ingredients) {
+    let ingredient = await prisma.ingredient.create({
+      data: {
+        foodId: ing.foodId,
+        recipeId: recipe.id,
+        quantity: ing.quantity,
+        measureId: ing.measureId,
+      },
+    });
+    await prisma.recipe.update({
+      where: { id: recipe.id },
+      data: { ingredients: { connect: { id: ingredient.id } } },
+    });
   }
-  res.redirect("/recipe/index");
+  res.status(200).json({ message: "Success" });
 });
 
 exports.recipe_edit_post = asyncHandler(async (req, res, next) => {

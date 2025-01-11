@@ -9,13 +9,15 @@ var JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 require("dotenv").config();
 
-var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = "secret";
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.COOKIE_SECRET,
+};
 
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
+      console.log(payload.username);
       const user = await prisma.user.findUnique({
         where: {
           username: payload.username,
