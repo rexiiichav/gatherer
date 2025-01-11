@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 require("dotenv").config();
 
 const validateSignUp = [

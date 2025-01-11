@@ -70,13 +70,7 @@ exports.recipe_index_get = asyncHandler(async (req, res, next) => {
       },
     ],
   });
-  let dependency = {};
-  dependency.recipes = recipes;
-  res.render("recipeindex", {
-    title: "All Recipes",
-    template: "recipeindex",
-    dependency: dependency,
-  });
+  res.status(200).json({ message: "Success", recipes });
 });
 
 exports.recipe_delete_post = asyncHandler(async (req, res, next) => {

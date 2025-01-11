@@ -11,11 +11,11 @@ router.post(
   controller.recipe_create_post
 );
 
-// router.get(
-//   "/index",
-//   passport.authenticate("jwt", { session: false }),
-//   controller.recipe_index_get
-// );
+router.get(
+  "/index",
+  passport.authenticate("jwt", { session: false }),
+  controller.recipe_index_get
+);
 
 // router.get(
 //   "/edit/:id",
