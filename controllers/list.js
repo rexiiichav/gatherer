@@ -3,24 +3,6 @@ const { body, validationResult } = require("express-validator");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-exports.list_create_get = asyncHandler(async (req, res, next) => {
-  let dependency = {};
-  dependency.url = "/list/new";
-  const recipes = await prisma.recipe.findMany({
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  dependency.recipes = recipes;
-  dependency.errors = [];
-  res.render("listform", {
-    title: "New List",
-    dependency: dependency,
-  });
-});
-
 exports.list_create_post = asyncHandler(async (req, res, next) => {
   let list = [];
   let chosenRecipes = listChosenRecipes(req.body);
@@ -28,46 +10,23 @@ exports.list_create_post = asyncHandler(async (req, res, next) => {
   ingredients = await convertIngredients(ingredients);
   ingredients = consolidateIngredients(ingredients, []);
   ingredients = await fixMeasures(ingredients);
-  const foods = await prisma.food.findMany({
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  const measures = await prisma.measure.findMany({
-    orderBy: [
-      {
-        name: "asc",
-      },
-    ],
-  });
-  let dependency = {};
-  dependency.url = "/list/edit";
-  dependency.errors = [];
-  dependency.ingredients = ingredients;
-  dependency.foods = foods;
-  dependency.measures = measures;
-  res.render("recipeform", {
-    title: "Edit Grocery List",
-    dependency: dependency,
-  });
+  res.status(200).json({ message: "Success", ingredients });
 });
 
 exports.list_edit_post = asyncHandler(async (req, res, next) => {
   let foods = [];
-  for (let ingredient in req.body) {
+  for (let ingredient in req.body.ingredients) {
     let food = await prisma.food.findUnique({
       where: {
-        name: req.body[ingredient][0],
+        name: ingredient.id,
       },
       include: {
         location: true,
       },
     });
-    food.quantity = req.body[ingredient][1];
+    food.quantity = ingredient.quantity;
     food.measure = await prisma.measure.findUnique({
-      where: { name: req.body[ingredient][2] },
+      where: { id: ingredient.measureId },
     });
     food.foodId = food.id;
     food.measureId = food.measure.id;
@@ -76,14 +35,9 @@ exports.list_edit_post = asyncHandler(async (req, res, next) => {
   foods = await convertIngredients(foods);
   foods = await consolidateIngredients(foods, []);
   foods = await fixMeasures(foods);
-  //Sort alphabetically
+
   foods = foods.sort((a, b) => b.name.localeCompare(a.name));
-  let locations = await prisma.location.findMany({});
-  res.render("listshow", {
-    title: "Grocery List",
-    foods: foods,
-    locations: locations,
-  });
+  res.status(200).json({ message: "Success", foods });
 });
 
 //utility

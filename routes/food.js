@@ -1,19 +1,20 @@
 var express = require("express");
 var router = express.Router();
-const controller = require("../controllers/list");
+const controller = require("../controllers/food");
+const passport = require("passport");
 
 //routes
 
-router.post(
-  "/new",
+router.get(
+  "/index",
   passport.authenticate("jwt", { session: false }),
-  controller.list_create_post
+  controller.food_index_get
 );
 
-router.post(
-  "/edit",
+router.get(
+  "/:id",
   passport.authenticate("jwt", { session: false }),
-  controller.list_edit_post
+  controller.food_show_get
 );
 
 module.exports = router;
