@@ -27,41 +27,6 @@ exports.recipe_create_post = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Success" });
 });
 
-exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
-  let recipe = await prisma.recipe.update({
-    where: { id: Number(req.params.id) },
-    data: {
-      name: req.body.name,
-    },
-  });
-  await prisma.ingredient.deleteMany({
-    where: { recipeId: recipe.id },
-  });
-  for (let i in req.body) {
-    if (i !== "name") {
-      let food = await prisma.food.findUnique({
-        where: { name: req.body[i][0] },
-      });
-      let measure = await prisma.measure.findUnique({
-        where: { name: req.body[i][2] },
-      });
-      let ingredient = await prisma.ingredient.create({
-        data: {
-          foodId: food.id,
-          recipeId: recipe.id,
-          quantity: Number(req.body[i][1]),
-          measureId: measure.id,
-        },
-      });
-      await prisma.recipe.update({
-        where: { name: req.body.name },
-        data: { ingredients: { connect: { id: ingredient.id } } },
-      });
-    }
-  }
-  res.redirect("/recipe/index");
-});
-
 exports.recipe_index_get = asyncHandler(async (req, res, next) => {
   const recipes = await prisma.recipe.findMany({
     orderBy: [
@@ -73,7 +38,44 @@ exports.recipe_index_get = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Success", recipes });
 });
 
-exports.recipe_delete_post = asyncHandler(async (req, res, next) => {
+exports.recipe_show_get = asyncHandler(async (req, res, next) => {
+  const recipe = await prisma.recipe.findUnique({
+    where: {
+      id: Number(req.params.id),
+    },
+    include: { ingredients: { include: { food: true, measure: true } } },
+  });
+  res.status(200).json({ message: "Success", recipe });
+});
+
+exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
+  let recipe = await prisma.recipe.update({
+    where: { id: Number(req.params.id) },
+    data: {
+      name: req.body.name,
+    },
+  });
+  await prisma.ingredient.deleteMany({
+    where: { recipeId: recipe.id },
+  });
+  for (let ing of req.body.ingredients) {
+    let ingredient = await prisma.ingredient.create({
+      data: {
+        foodId: ing.foodId,
+        recipeId: recipe.id,
+        quantity: ing.quantity,
+        measureId: ing.measureId,
+      },
+    });
+    await prisma.recipe.update({
+      where: { id: recipe.id },
+      data: { ingredients: { connect: { id: ingredient.id } } },
+    });
+  }
+  res.status(200).json({ message: "Success" });
+});
+
+exports.recipe_delete_delete = asyncHandler(async (req, res, next) => {
   await prisma.ingredient.deleteMany({
     where: {
       recipeId: Number(req.params.id),
@@ -84,5 +86,5 @@ exports.recipe_delete_post = asyncHandler(async (req, res, next) => {
       id: Number(req.params.id),
     },
   });
-  res.redirect("/recipe/index");
+  res.status(200).json({ message: "Success" });
 });

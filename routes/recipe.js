@@ -17,21 +17,22 @@ router.get(
   controller.recipe_index_get
 );
 
-// router.get(
-//   "/edit/:id",
-//   passport.authenticate("jwt", { session: false }),
-//   controller.recipe_edit_get
-// );
-// router.post(
-//   "/edit/:id",
-//   passport.authenticate("jwt", { session: false }),
-//   controller.recipe_edit_post
-// );
+router.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  controller.recipe_show_get
+);
 
-// router.post(
-//   "/delete/:id",
-//   passport.authenticate("jwt", { session: false }),
-//   controller.recipe_delete_post
-// );
+router.post(
+  "/edit/:id",
+  passport.authenticate("jwt", { session: false }),
+  controller.recipe_edit_post
+);
+
+router.delete(
+  "/delete/:id",
+  passport.authenticate("jwt", { session: false }),
+  controller.recipe_delete_delete
+);
 
 module.exports = router;
