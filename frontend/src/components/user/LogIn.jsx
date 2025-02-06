@@ -1,13 +1,12 @@
-import { useState } from "react";
-import UsernameField from "../components/user/UsernameField";
-import PasswordField from "../components/user/PasswordField";
-import Error from "../components/user/Error";
+import { useState, useContext } from "react";
+import UsernameField from "./UsernameField";
+import PasswordField from "./PasswordField";
+import Error from "./Error";
 import { useNavigate } from "react-router-dom";
 
-export default function SignUp({ url }) {
+export default function LogIn({ url }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState([]);
   const navigate = useNavigate();
 
@@ -18,29 +17,30 @@ export default function SignUp({ url }) {
       const header = new Headers();
       header.append("Content-Type", "application/json");
 
-      const req = new Request(`${url}/user/signup`, {
+      const req = new Request(`${url}/user/login`, {
         method: "POST",
         body: JSON.stringify({
           username: username,
           password: password,
-          confirmPassword: confirmPassword,
         }),
         headers: header,
         mode: "cors",
       });
 
       let response = await fetch(req);
-      if (response.status == 409) {
-        setError([...errors, "Username already taken."]);
+      if (response.status == 401) {
+        setError([...errors, "Username or Password Is Incorrect."]);
       } else if (response.status == 200) {
-        navigate("/login");
+        response = await response.json();
+        navigate("/", { state: { token: response.token } });
+        //use Navigate + Location state hooks to send token to next route
       }
     }
   }
 
   let validateForm = (errors) => {
-    if (password != confirmPassword) {
-      errors.push("Passwords don't match");
+    if (password == "" || username == "") {
+      errors.push("Username and Password Must Be Filled In");
       setError(errors);
     }
     return errors;
@@ -48,15 +48,10 @@ export default function SignUp({ url }) {
 
   return (
     <>
-      <h1>Sign Up</h1>
+      <h1>Log In</h1>
       <Error errors={error} />
       <UsernameField label={"Username"} value={username} set={setUsername} />
       <PasswordField label={"Password"} value={password} set={setPassword} />
-      <PasswordField
-        label={"Confirm Password"}
-        value={confirmPassword}
-        set={setConfirmPassword}
-      />
       <button onClick={submitForm}>Submit</button>
     </>
   );
