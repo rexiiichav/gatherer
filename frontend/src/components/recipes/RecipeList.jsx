@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import IngredientInput from "../ingredients/IngredientInput";
 
 export default function RecipeList({ url }) {
   let location = useLocation();
@@ -45,7 +44,18 @@ export default function RecipeList({ url }) {
         Create New List
       </Link>
 
-      <IngredientInput foods={foods} measures={measures}></IngredientInput>
+      <ol>
+        {recipes.map((recipe, index) => (
+          <Link
+            key={index}
+            to={`/recipe/${recipe.id}`}
+            state={{ token: location.state.token }}
+          >
+            {" "}
+            <li key={index}>{recipe.name}</li>
+          </Link>
+        ))}
+      </ol>
     </>
   );
 }

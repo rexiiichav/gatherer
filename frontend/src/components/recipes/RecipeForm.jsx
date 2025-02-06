@@ -116,7 +116,15 @@ export default function RecipeList({ url, title }) {
         Create New List
       </Link>
 
-      <IngredientInput foods={foods} measures={measures}></IngredientInput>
+      <div>
+        <IngredientInput
+          index={0}
+          foods={foods}
+          measures={measures}
+          ingredients={ingredients}
+          setIngredients={setIngredients}
+        ></IngredientInput>
+      </div>
     </>
   );
 }
