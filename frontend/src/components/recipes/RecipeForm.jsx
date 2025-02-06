@@ -12,12 +12,9 @@ export default function RecipeList({ url, title }) {
   const [measures, setMeasures] = useState([]);
   const [ingredients, setIngredients] = useState([...recipe.ingredients]);
   let params = useParams();
-  //build custom component for input block that includes. Pass
-  //set recipe to each instance of the component. Create the number
-  //of inputs based upon ingredients.length and add an ingredient (or remove)
-  //to the ingredients array
+  // Add button to expand the ingredients array and check Ingredient Input
 
-  //Get recipe if needed
+  //Get recipe if needed  and set ingredients list
   useEffect(() => {
     if (params.hasOwnProperty("id")) {
       const header = new Headers();
@@ -39,6 +36,7 @@ export default function RecipeList({ url, title }) {
         })
         .then((response) => {
           setRecipe(response.recipe);
+          setIngredients(response.recipe.ingredients);
         });
     }
   }, []);
@@ -103,6 +101,8 @@ export default function RecipeList({ url, title }) {
     }
   }, []);
 
+  console.log(ingredients);
+
   return (
     <>
       <h1>{title}</h1>
@@ -116,15 +116,18 @@ export default function RecipeList({ url, title }) {
         Create New List
       </Link>
 
-      <div>
-        <IngredientInput
-          index={0}
-          foods={foods}
-          measures={measures}
-          ingredients={ingredients}
-          setIngredients={setIngredients}
-        ></IngredientInput>
-      </div>
+      {ingredients.map((ingredient, index) => (
+        <div key={index}>
+          <IngredientInput
+            index={index}
+            ingredient={ingredient}
+            foods={foods}
+            measures={measures}
+            ingredients={ingredients}
+            setIngredients={setIngredients}
+          ></IngredientInput>
+        </div>
+      ))}
     </>
   );
 }

@@ -2,6 +2,8 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 
+//need to enable default ingredient selections
+
 export default function IngredientInput({
   index,
   ingredient = {
