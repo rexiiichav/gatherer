@@ -6,19 +6,15 @@ import Select from "react-select";
 
 export default function IngredientInput({
   index,
-  ingredient = {
-    food: { name: null },
-    measure: { name: null },
-    quantity: null,
-  },
+  ingredient,
   foods,
   measures,
   ingredients,
   setIngredients,
 }) {
-  const [quantity, setQuantity] = useState(null);
-  const [measure, setMeasure] = useState(null);
-  const [food, setFood] = useState(null);
+  const [quantity, setQuantity] = useState(ingredient.quantity);
+  const [measure, setMeasure] = useState(ingredient.measure);
+  const [food, setFood] = useState(ingredient.food);
 
   function handleChange(value, set) {
     set(value);
@@ -28,8 +24,8 @@ export default function IngredientInput({
     if (quantity && measure && food) {
       let changedIngredients = [...ingredients];
       changedIngredients[index] = {
-        foodId: food.value,
-        measureId: measure.value,
+        food: food,
+        measure: measure,
         quantity: quantity,
       };
       setIngredients(changedIngredients);
@@ -40,17 +36,20 @@ export default function IngredientInput({
     <>
       <input
         type="number"
+        value={quantity}
         onChange={(value) => {
           handleChange(Number(value.target.value), setQuantity);
         }}
       />
       <Select
+        value={measure}
         options={measures}
         onChange={(value) => {
           handleChange(value, setMeasure);
         }}
       />
       <Select
+        value={food}
         options={foods}
         onChange={(value) => {
           handleChange(value, setFood);

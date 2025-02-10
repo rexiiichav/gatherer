@@ -101,6 +101,17 @@ export default function RecipeList({ url, title }) {
     }
   }, []);
 
+  function addIngredient() {
+    setIngredients([
+      ...ingredients,
+      {
+        food: { name: null, id: null },
+        measure: { name: null, id: null },
+        quantity: null,
+      },
+    ]);
+  }
+
   console.log(ingredients);
 
   return (
@@ -120,7 +131,14 @@ export default function RecipeList({ url, title }) {
         <div key={index}>
           <IngredientInput
             index={index}
-            ingredient={ingredient}
+            ingredient={{
+              measure: {
+                value: ingredient.measure.id,
+                label: ingredient.measure.name,
+              },
+              food: { value: ingredient.food.id, label: ingredient.food.name },
+              quantity: ingredient.quantity,
+            }}
             foods={foods}
             measures={measures}
             ingredients={ingredients}
@@ -128,6 +146,8 @@ export default function RecipeList({ url, title }) {
           ></IngredientInput>
         </div>
       ))}
+
+      <button onClick={addIngredient}>Add Ingredient</button>
     </>
   );
 }
