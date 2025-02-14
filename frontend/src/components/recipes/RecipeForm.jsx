@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ export default function RecipeList({ url, title }) {
   const [foods, setFoods] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [ingredients, setIngredients] = useState([...recipe.ingredients]);
+  const keyRef = useRef(0);
   let params = useParams();
   // Add button to expand the ingredients array and check Ingredient Input
 
@@ -105,14 +106,13 @@ export default function RecipeList({ url, title }) {
     setIngredients([
       ...ingredients,
       {
-        food: { name: null, id: null },
-        measure: { name: null, id: null },
-        quantity: null,
+        food: { name: "Select", id: "Select" },
+        measure: { name: "Select", id: "Select" },
+        quantity: 0,
       },
     ]);
+    keyRef.current = keyRef.current + 1;
   }
-
-  console.log(ingredients);
 
   return (
     <>
@@ -127,25 +127,31 @@ export default function RecipeList({ url, title }) {
         Create New List
       </Link>
 
-      {ingredients.map((ingredient, index) => (
-        <div key={index}>
-          <IngredientInput
-            index={index}
-            ingredient={{
-              measure: {
-                value: ingredient.measure.id,
-                label: ingredient.measure.name,
-              },
-              food: { value: ingredient.food.id, label: ingredient.food.name },
-              quantity: ingredient.quantity,
-            }}
-            foods={foods}
-            measures={measures}
-            ingredients={ingredients}
-            setIngredients={setIngredients}
-          ></IngredientInput>
-        </div>
-      ))}
+      {ingredients.map((ingredient, index) => {
+        keyRef.current = keyRef.current + 1;
+        return (
+          <div key={keyRef.current}>
+            <IngredientInput
+              index={index}
+              ingredient={{
+                measure: {
+                  value: ingredient.measure.id,
+                  label: ingredient.measure.name,
+                },
+                food: {
+                  value: ingredient.food.id,
+                  label: ingredient.food.name,
+                },
+                quantity: ingredient.quantity,
+              }}
+              foods={foods}
+              measures={measures}
+              ingredients={ingredients}
+              setIngredients={setIngredients}
+            ></IngredientInput>
+          </div>
+        );
+      })}
 
       <button onClick={addIngredient}>Add Ingredient</button>
     </>

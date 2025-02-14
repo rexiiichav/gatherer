@@ -12,25 +12,38 @@ export default function IngredientInput({
   ingredients,
   setIngredients,
 }) {
+  const indexLengthRef = useRef(ingredients.length);
   const [quantity, setQuantity] = useState(ingredient.quantity);
   const [measure, setMeasure] = useState(ingredient.measure);
   const [food, setFood] = useState(ingredient.food);
 
   function handleChange(value, set) {
     set(value);
+    let changedIngredients = [...ingredients];
+    changedIngredients[index] = {
+      food: food,
+      measure: measure,
+      quantity: quantity,
+    };
+    setIngredients(changedIngredients);
   }
 
-  useEffect(() => {
-    if (quantity && measure && food) {
-      let changedIngredients = [...ingredients];
-      changedIngredients[index] = {
-        food: food,
-        measure: measure,
-        quantity: quantity,
-      };
-      setIngredients(changedIngredients);
+  function resetIngredient() {
+    if (indexLengthRef.current != ingredients.length) {
+      setQuantity(ingredient.quantity);
+      setMeasure(ingredient.measure);
+      setFood(ingredient.food);
+      indexLengthRef.current = ingredients.length;
     }
-  }, [quantity, measure, food]);
+  }
+
+  function removeIngredient() {
+    let editIngredients = [...ingredients];
+    editIngredients.splice(index, 1);
+    setIngredients(editIngredients);
+  }
+
+  resetIngredient();
 
   return (
     <>
@@ -55,6 +68,7 @@ export default function IngredientInput({
           handleChange(value, setFood);
         }}
       />
+      <button onClick={removeIngredient}>Remove Ingredient</button>
     </>
   );
 }
