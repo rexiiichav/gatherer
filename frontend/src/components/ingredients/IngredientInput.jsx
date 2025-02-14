@@ -19,31 +19,25 @@ export default function IngredientInput({
 
   function handleChange(value, set) {
     set(value);
+  }
+
+  useEffect(() => {
     let changedIngredients = [...ingredients];
     changedIngredients[index] = {
+      id: ingredient.id,
       food: food,
       measure: measure,
       quantity: quantity,
     };
+    console.log(changedIngredients);
     setIngredients(changedIngredients);
-  }
-
-  function resetIngredient() {
-    if (indexLengthRef.current != ingredients.length) {
-      setQuantity(ingredient.quantity);
-      setMeasure(ingredient.measure);
-      setFood(ingredient.food);
-      indexLengthRef.current = ingredients.length;
-    }
-  }
+  }, [food, quantity, measure]);
 
   function removeIngredient() {
     let editIngredients = [...ingredients];
     editIngredients.splice(index, 1);
     setIngredients(editIngredients);
   }
-
-  resetIngredient();
 
   return (
     <>

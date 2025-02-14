@@ -43,6 +43,11 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/recipe/create",
+    element: <RecipeForm url={url} title="Create Recipe" />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "/recipe/:id/edit",
     element: <RecipeForm url={url} title="Edit Recipe" />,
     errorElement: <ErrorPage />,
