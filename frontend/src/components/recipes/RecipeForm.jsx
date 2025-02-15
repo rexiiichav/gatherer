@@ -7,13 +7,13 @@ import IngredientInput from "../ingredients/IngredientInput";
 export default function RecipeList({ url, title }) {
   let location = useLocation();
   let navigate = useNavigate();
+  const [name, setName] = useState("");
   const [recipe, setRecipe] = useState({ name: "", ingredients: [] });
   const [foods, setFoods] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [ingredients, setIngredients] = useState([...recipe.ingredients]);
   const keyRef = useRef(0);
   let params = useParams();
-  // Add button to expand the ingredients array and check Ingredient Input
 
   //Get recipe if needed  and set ingredients list
   useEffect(() => {
@@ -37,7 +37,24 @@ export default function RecipeList({ url, title }) {
         })
         .then((response) => {
           setRecipe(response.recipe);
-          setIngredients(response.recipe.ingredients);
+          let normalizedIngredients = response.recipe.ingredients.map(
+            (ingredient) => {
+              return {
+                id: ingredient.id,
+                measure: {
+                  value: ingredient.measure.id,
+                  label: ingredient.measure.name,
+                },
+                food: {
+                  value: ingredient.food.id,
+                  label: ingredient.food.name,
+                },
+                quantity: ingredient.quantity,
+              };
+            }
+          );
+          setIngredients(normalizedIngredients);
+          setName(response.recipe.name);
           keyRef.current =
             response.recipe.ingredients
               .map((ing) => Number(ing.id))
@@ -115,8 +132,66 @@ export default function RecipeList({ url, title }) {
     keyRef.current = keyRef.current + 1;
   }
 
+  function updateName(value) {
+    setName(value);
+  }
+
   function submitForm() {
     //reformat the ingredients and send as fetch request
+    if (
+      name != "" &&
+      ingredients.every((ing) => {
+        return (
+          ing.food.value != "Select" &&
+          ing.measure.value != "Select" &&
+          Number(ing.quantity) > 0
+        );
+      })
+    ) {
+      let reformatIngredients = ingredients.map((ingredient) => {
+        return {
+          foodId: ingredient.food.value,
+          measureId: ingredient.measure.value,
+          quantity: ingredient.quantity,
+        };
+      });
+
+      let formatRecipe = { name: name, ingredients: reformatIngredients };
+
+      const header = new Headers();
+      header.append("Content-Type", "application/json");
+      header.append("Authorization", `bearer ${location.state.token}`);
+
+      let submitUrl = "";
+      if (params.hasOwnProperty("id")) {
+        submitUrl = `${url}/recipe/edit/${params.id}`;
+      } else {
+        submitUrl = `${url}/recipe/new`;
+      }
+
+      const req = new Request(submitUrl, {
+        method: "POST",
+        body: JSON.stringify(formatRecipe),
+        headers: header,
+        mode: "cors",
+      });
+
+      fetch(req)
+        .then((response) => {
+          if (response.status == 401) {
+            navigate("/login");
+            return Promise.reject(new Error("Network response was not ok"));
+          } else if (response.status == 200) {
+            return response.json();
+          } else {
+            throw error;
+          }
+        })
+        .then((response) => {
+          navigate("/recipes", { state: { token: location.state.token } });
+        })
+        .catch();
+    }
   }
 
   return (
@@ -125,30 +200,26 @@ export default function RecipeList({ url, title }) {
       <Link to="/" state={{ token: location.state.token }}>
         Home
       </Link>
-      <Link to="/recipes/new" state={{ token: location.state.token }}>
+      <Link to="/recipe/create" state={{ token: location.state.token }}>
         Create New Recipe
       </Link>
       <Link to="/list" state={{ token: location.state.token }}>
         Create New List
       </Link>
 
+      <label htmlFor="name">Name:</label>
+      <input
+        type="text"
+        id="name"
+        value={name}
+        onChange={(value) => updateName(value.target.value)}
+      />
       {ingredients.map((ingredient, index) => {
         return (
           <div key={ingredient.id}>
             <IngredientInput
               index={index}
-              ingredient={{
-                id: ingredient.id,
-                measure: {
-                  value: ingredient.measure.id,
-                  label: ingredient.measure.name,
-                },
-                food: {
-                  value: ingredient.food.id,
-                  label: ingredient.food.name,
-                },
-                quantity: ingredient.quantity,
-              }}
+              ingredient={ingredient}
               foods={foods}
               measures={measures}
               ingredients={ingredients}

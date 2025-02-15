@@ -29,7 +29,6 @@ export default function IngredientInput({
       measure: measure,
       quantity: quantity,
     };
-    console.log(changedIngredients);
     setIngredients(changedIngredients);
   }, [food, quantity, measure]);
 

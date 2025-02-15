@@ -37,7 +37,7 @@ export default function RecipeList({ url }) {
       <Link to="/" state={{ token: location.state.token }}>
         Home
       </Link>
-      <Link to="/recipes/new" state={{ token: location.state.token }}>
+      <Link to="/recipe/create" state={{ token: location.state.token }}>
         Create New Recipe
       </Link>
       <Link to="/list" state={{ token: location.state.token }}>
@@ -51,7 +51,6 @@ export default function RecipeList({ url }) {
             to={`/recipe/${recipe.id}`}
             state={{ token: location.state.token }}
           >
-            {" "}
             <li key={index}>{recipe.name}</li>
           </Link>
         ))}
