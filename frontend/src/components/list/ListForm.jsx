@@ -96,8 +96,8 @@ export default function RecipeList({ url, title }) {
       ...ingredients,
       {
         id: keyRef.current,
-        food: { name: "Select", id: "Select" },
-        measure: { name: "Select", id: "Select" },
+        food: { label: "Select", id: "Select" },
+        measure: { label: "Select", id: "Select" },
         quantity: 0,
       },
     ]);
@@ -127,12 +127,7 @@ export default function RecipeList({ url, title }) {
       header.append("Content-Type", "application/json");
       header.append("Authorization", `bearer ${location.state.token}`);
 
-      let submitUrl = "";
-      if (params.hasOwnProperty("id")) {
-        submitUrl = `${url}/recipe/edit/${params.id}`;
-      } else {
-        submitUrl = `${url}/recipe/new`;
-      }
+      let submitUrl = `${url}/list/edit`;
 
       const req = new Request(submitUrl, {
         method: "POST",
@@ -149,7 +144,7 @@ export default function RecipeList({ url, title }) {
           } else if (response.status == 200) {
             return response.json();
           } else {
-            throw error;
+            throw Error;
           }
         })
         .then((response) => {

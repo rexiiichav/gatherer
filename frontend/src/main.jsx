@@ -13,6 +13,7 @@ import RecipeForm from "./components/recipes/RecipeForm";
 import Shell from "./components/utility/Shell";
 import RecipeSelect from "./components/list/RecipeSelect";
 import ListForm from "./components/list/ListForm";
+import ListDisplay from "./components/list/ListDisplay";
 
 const url = "http://localhost:3001";
 
@@ -94,6 +95,15 @@ const router = createBrowserRouter([
     element: (
       <Shell>
         <ListForm url={url} />
+      </Shell>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/list/display",
+    element: (
+      <Shell>
+        <ListDisplay url={url} />
       </Shell>
     ),
     errorElement: <ErrorPage />,

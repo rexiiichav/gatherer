@@ -124,8 +124,8 @@ export default function RecipeList({ url, title }) {
       ...ingredients,
       {
         id: keyRef.current,
-        food: { name: "Select", id: "Select" },
-        measure: { name: "Select", id: "Select" },
+        food: { label: "Select", id: "Select" },
+        measure: { label: "Select", id: "Select" },
         quantity: 0,
       },
     ]);
