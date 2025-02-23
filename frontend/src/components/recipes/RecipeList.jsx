@@ -34,24 +34,15 @@ export default function RecipeList({ url }) {
   return (
     <>
       <h1>Recipes</h1>
-      <Link to="/" state={{ token: location.state.token }}>
-        Home
-      </Link>
-      <Link to="/recipe/create" state={{ token: location.state.token }}>
-        Create New Recipe
-      </Link>
-      <Link to="/list" state={{ token: location.state.token }}>
-        Create New List
-      </Link>
 
       <ol>
         {recipes.map((recipe, index) => (
           <Link
-            key={index}
+            key={recipe.id}
             to={`/recipe/${recipe.id}`}
             state={{ token: location.state.token }}
           >
-            <li key={index}>{recipe.name}</li>
+            <li>{recipe.name}</li>
           </Link>
         ))}
       </ol>

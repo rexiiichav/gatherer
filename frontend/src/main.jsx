@@ -10,13 +10,20 @@ import Form from "./routes/form";
 import RecipeList from "./components/recipes/RecipeList";
 import RecipeShow from "./components/recipes/RecipeShow";
 import RecipeForm from "./components/recipes/RecipeForm";
+import Shell from "./components/utility/Shell";
+import RecipeSelect from "./components/list/RecipeSelect";
+import ListForm from "./components/list/ListForm";
 
 const url = "http://localhost:3001";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home url={url} />,
+    element: (
+      <Shell>
+        <Home url={url} />
+      </Shell>
+    ),
     errorElement: <ErrorPage />,
   },
   {
@@ -39,22 +46,56 @@ const router = createBrowserRouter([
   },
   {
     path: "/recipes",
-    element: <RecipeList url={url} />,
+    element: (
+      <Shell>
+        <RecipeList url={url} />
+      </Shell>
+    ),
     errorElement: <ErrorPage />,
   },
   {
     path: "/recipe/create",
-    element: <RecipeForm url={url} title="Create Recipe" />,
+    element: (
+      <Shell>
+        <RecipeForm url={url} title="Create Recipe" />
+      </Shell>
+    ),
     errorElement: <ErrorPage />,
   },
   {
     path: "/recipe/:id/edit",
-    element: <RecipeForm url={url} title="Edit Recipe" />,
+    element: (
+      <Shell>
+        <RecipeForm url={url} title="Edit Recipe" />
+      </Shell>
+    ),
     errorElement: <ErrorPage />,
   },
   {
     path: "/recipe/:id",
-    element: <RecipeShow url={url} />,
+    element: (
+      <Shell>
+        <RecipeShow url={url} />
+      </Shell>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/list/create",
+    element: (
+      <Shell>
+        <RecipeSelect url={url} />
+      </Shell>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/list/edit",
+    element: (
+      <Shell>
+        <ListForm url={url} />
+      </Shell>
+    ),
     errorElement: <ErrorPage />,
   },
 ]);

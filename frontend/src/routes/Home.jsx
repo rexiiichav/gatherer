@@ -34,15 +34,6 @@ export default function Home({ url }) {
   return (
     <>
       <h1>{username}'s Dashboard</h1>
-      <Link to="/recipes" state={{ token: location.state.token }}>
-        Recipes
-      </Link>
-      <Link to="/recipe/create" state={{ token: location.state.token }}>
-        Create New Recipe
-      </Link>
-      <Link to="/list" state={{ token: location.state.token }}>
-        Create New List
-      </Link>
     </>
   );
 }
