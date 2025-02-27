@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -8,10 +8,11 @@ export default function RecipeSelect({ url }) {
   let location = useLocation();
   let navigate = useNavigate();
   const [recipes, setRecipes] = useState([]);
-  const [selectedRecipes, setSelectedRecipes] = useState({});
-  //FIX THE DATA STRUCTURE
-  //Finish RecipeInput, then add in a post request to create list
-  //Then send the recipes to the RecipeForm for mutation
+  const [selectedRecipes, setSelectedRecipes] = useState([]);
+  //Make it so the recipe selection form works similarly to the standard
+  //recipe form
+  const keyRef = useRef(0);
+  //selectedRecipes needs to be [{},{},{}]
 
   useEffect(() => {
     const header = new Headers();
@@ -32,11 +33,21 @@ export default function RecipeSelect({ url }) {
         }
       })
       .then((response) => {
-        setRecipes(response.recipes);
+        let formatRecipes = response.recipes.map((r) => {
+          return { label: r.name, value: r.id };
+        });
+        setRecipes(formatRecipes);
       });
   }, []);
 
   function submit() {
+    let formattedRecipes = {};
+    selectedRecipes.forEach((recipe) => {
+      if (recipe.value != undefined) {
+        formattedRecipes[recipe.value] = recipe.quantity;
+      }
+    });
+
     const header = new Headers();
     header.append("Content-Type", "application/json");
     header.append("Authorization", `bearer ${location.state.token}`);
@@ -45,7 +56,7 @@ export default function RecipeSelect({ url }) {
 
     const req = new Request(submitUrl, {
       method: "POST",
-      body: JSON.stringify({ recipes: selectedRecipes }),
+      body: JSON.stringify({ recipes: formattedRecipes }),
       headers: header,
       mode: "cors",
     });
@@ -72,18 +83,33 @@ export default function RecipeSelect({ url }) {
       .catch();
   }
 
+  function addRecipe() {
+    keyRef.current += 1;
+    setSelectedRecipes([
+      ...selectedRecipes,
+      {
+        key: keyRef.current,
+        label: "Select",
+        value: undefined,
+        quantity: 0,
+      },
+    ]);
+  }
+
   return (
     <>
       <h1>Select Recipes</h1>
 
-      {recipes.map((recipe) => (
+      {selectedRecipes.map((recipe, index) => (
         <RecipeInput
-          key={recipe.id}
-          recipe={recipe}
+          key={recipe.key}
+          index={index}
+          recipes={recipes}
           selectedRecipes={selectedRecipes}
           setSelectedRecipes={setSelectedRecipes}
         ></RecipeInput>
       ))}
+      <button onClick={addRecipe}>Add Recipe</button>
       <button onClick={submit}>Create List</button>
     </>
   );

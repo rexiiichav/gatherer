@@ -3,30 +3,49 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 
 export default function IngredientInput({
-  recipe,
+  index,
+  recipes,
   selectedRecipes,
   setSelectedRecipes,
 }) {
   let [quantity, setQuantity] = useState(0);
+  let [recipe, setRecipe] = useState(selectedRecipes[index]);
 
-  function handleChange(recipeId, value) {
-    setQuantity(value);
-    let alteredSelectedRecipes = { ...selectedRecipes };
-    alteredSelectedRecipes[recipeId] = value;
+  function handleChange(value, set) {
+    set(value);
+    let alteredSelectedRecipes = [...selectedRecipes];
+    if (typeof value === "number") {
+      alteredSelectedRecipes[index].quantity = value;
+    } else {
+      alteredSelectedRecipes[index].label = value.label;
+      alteredSelectedRecipes[index].value = value.value;
+    }
+    setSelectedRecipes(alteredSelectedRecipes);
+  }
+
+  function removeRecipe() {
+    let alteredSelectedRecipes = [...selectedRecipes];
+    alteredSelectedRecipes.splice(index, 1);
     setSelectedRecipes(alteredSelectedRecipes);
   }
 
   return (
     <div>
-      <label htmlFor={recipe.id}>{recipe.name}</label>
       <input
-        id={recipe.id}
         type="number"
         value={quantity}
         onChange={(value) => {
-          handleChange(recipe.id, Number(value.target.value));
+          handleChange(Number(value.target.value), setQuantity);
         }}
       />
+      <Select
+        value={recipe}
+        options={recipes}
+        onChange={(value) => {
+          handleChange(value, setRecipe);
+        }}
+      />
+      <button onClick={removeRecipe}>Remove Recipe</button>
     </div>
   );
 }

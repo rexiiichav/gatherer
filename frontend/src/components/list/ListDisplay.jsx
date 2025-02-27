@@ -6,10 +6,6 @@ export default function ListDisplay({ url }) {
   let location = useLocation();
   let navigate = useNavigate();
   const foods = location.state.foods;
-  //Create utility function that creates a list of all unique
-  //location names in the foods array.
-  //Create two more components: one to display the location section
-  //and another to show the individual foods.
 
   let sortFoodsByLocation = {};
   foods.forEach((food) => {
