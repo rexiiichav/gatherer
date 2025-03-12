@@ -4,29 +4,30 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 exports.list_create_post = asyncHandler(async (req, res, next) => {
+  //expecting {recipes: {recipeId: recipeQuantity, ...}}
   let list = [];
-  let chosenRecipes = listChosenRecipes(req.body);
+  let chosenRecipes = listChosenRecipes(req.body.recipes);
   let ingredients = await listIngredients(chosenRecipes);
   ingredients = await convertIngredients(ingredients);
   ingredients = consolidateIngredients(ingredients, []);
   ingredients = await fixMeasures(ingredients);
-  res.status(200).json({ message: "Success", ingredients });
+  res.status(200).json({ message: "Success", ingredients: ingredients });
 });
 
 exports.list_edit_post = asyncHandler(async (req, res, next) => {
   let foods = [];
-  for (let ingredient in req.body.ingredients) {
+  for (let ingredient of req.body.ingredients) {
     let food = await prisma.food.findUnique({
       where: {
-        name: ingredient.id,
+        id: Number(ingredient.foodId),
       },
       include: {
         location: true,
       },
     });
-    food.quantity = ingredient.quantity;
+    food.quantity = Number(ingredient.quantity);
     food.measure = await prisma.measure.findUnique({
-      where: { id: ingredient.measureId },
+      where: { id: Number(ingredient.measureId) },
     });
     food.foodId = food.id;
     food.measureId = food.measure.id;

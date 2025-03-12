@@ -10,7 +10,7 @@ exports.food_index_get = asyncHandler(async (req, res, next) => {
       },
     ],
   });
-  res.status(200).json({ message: "Success", foods });
+  res.status(200).json({ message: "Success", foods: foods });
 });
 
 exports.food_show_get = asyncHandler(async (req, res, next) => {

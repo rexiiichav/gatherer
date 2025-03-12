@@ -30,18 +30,26 @@ exports.sign_up_post = [
   validateSignUp,
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-    console.log(req.body);
     if (!errors.isEmpty()) {
       res.status(409).json({ errors: errors.errors });
+    } else if (
+      await prisma.user.findUnique({
+        where: {
+          username: req.body.username,
+        },
+      })
+    ) {
+      res.status(409).json({ error: "Username already taken." });
     } else {
       bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         try {
-          await prisma.user.create({
+          let user = await prisma.user.create({
             data: {
               username: req.body.username,
               password: hashedPassword,
             },
           });
+          console.log(user);
         } catch {
           next(err);
         }
@@ -73,4 +81,14 @@ exports.login_post = asyncHandler(async (req, res, next) => {
     message: "Success",
     token,
   });
+});
+
+exports.user_get = asyncHandler(async (req, res, next) => {
+  if (req.user) {
+    console.log(req.user);
+    return res
+      .status(200)
+      .json({ username: req.user.username, id: req.user.id });
+  }
+  return res.status(401);
 });

@@ -10,7 +10,7 @@ exports.measure_index_get = asyncHandler(async (req, res, next) => {
       },
     ],
   });
-  res.status(200).json({ message: "Success", measures });
+  res.status(200).json({ message: "Success", measures: measures });
 });
 
 exports.measure_show_get = asyncHandler(async (req, res, next) => {

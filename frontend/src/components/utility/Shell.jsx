@@ -7,26 +7,8 @@ export default function Shell({ children }) {
   let navigate = useNavigate();
 
   return (
-    <>
-      <ul>
-        <li>
-          <Link to="/recipes" state={{ token: location.state.token }}>
-            Recipes
-          </Link>
-        </li>
-        <li>
-          <Link to="/recipe/create" state={{ token: location.state.token }}>
-            Create New Recipe
-          </Link>
-        </li>
-        <li>
-          <Link to="/list/create" state={{ token: location.state.token }}>
-            Create New List
-          </Link>
-        </li>
-      </ul>
-
+    <div class="w-100% min-h-full bg-gradient-to-r from-teal-200 to-lime-200">
       {children}
-    </>
+    </div>
   );
 }

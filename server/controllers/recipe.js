@@ -35,7 +35,7 @@ exports.recipe_index_get = asyncHandler(async (req, res, next) => {
       },
     ],
   });
-  res.status(200).json({ message: "Success", recipes });
+  res.status(200).json({ message: "Success", recipes: recipes });
 });
 
 exports.recipe_show_get = asyncHandler(async (req, res, next) => {
@@ -45,7 +45,7 @@ exports.recipe_show_get = asyncHandler(async (req, res, next) => {
     },
     include: { ingredients: { include: { food: true, measure: true } } },
   });
-  res.status(200).json({ message: "Success", recipe });
+  res.status(200).json({ message: "Success", recipe: recipe });
 });
 
 exports.recipe_edit_post = asyncHandler(async (req, res, next) => {

@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 var JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 require("dotenv").config();
+let morgan = require("morgan");
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -35,6 +36,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+app.use(morgan("dev"));
 
 const PORT = process.env.PORT || 5000;
 
@@ -54,6 +56,5 @@ app.use("/food", foodRouter);
 app.use("/measure", measureRouter);
 app.use("/location", locationRouter);
 
-app.use("*", (req, res, next) => res.send("404"));
 //confirmation log
 app.listen(PORT, () => console.log("app listening..."));

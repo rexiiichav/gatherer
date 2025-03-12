@@ -16,6 +16,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Quinoa" },
+    update: {},
+    create: {
+      name: "Quinoa",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Sriracha" },
     update: {},
     create: {
@@ -36,6 +49,32 @@ async function foods() {
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Sweet Potato" },
+    update: {},
+    create: {
+      name: "Sweet Potato",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Coriander" },
+    update: {},
+    create: {
+      name: "Coriander",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Spice" },
         })
       ).id,
     },
@@ -159,6 +198,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Miso Paste" },
+    update: {},
+    create: {
+      name: "Miso Paste",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Refrigerator" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Cumin" },
     update: {},
     create: {
@@ -237,6 +289,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Tomato" },
+    update: {},
+    create: {
+      name: "Tomato",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Tomato Paste" },
     update: {},
     create: {
@@ -267,6 +332,19 @@ async function foods() {
     update: {},
     create: {
       name: "Yellow Onion",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Serrano Pepper" },
+    update: {},
+    create: {
+      name: "Serrano Pepper",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Produce" },
@@ -393,6 +471,45 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Tahini" },
+    update: {},
+    create: {
+      name: "Tahini",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Sesame Seeds" },
+    update: {},
+    create: {
+      name: "Sesame Seeds",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Sesame Oil" },
+    update: {},
+    create: {
+      name: "Sesame Oil",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Crushed Fire Roasted Tomatoes" },
     update: {},
     create: {
@@ -432,10 +549,62 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Vital Wheat Gluten" },
+    update: {},
+    create: {
+      name: "Vital Wheat Gluten",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Leek" },
+    update: {},
+    create: {
+      name: "Leek",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Yukon Gold Potatoes" },
     update: {},
     create: {
       name: "Yukon Gold Potatoes",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Cabbage" },
+    update: {},
+    create: {
+      name: "Cabbage",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Cauliflower" },
+    update: {},
+    create: {
+      name: "Cauliflower",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Produce" },
@@ -475,6 +644,19 @@ async function foods() {
     update: {},
     create: {
       name: "Lemon",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Red Onion" },
+    update: {},
+    create: {
+      name: "Red Onion",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Produce" },
@@ -582,6 +764,19 @@ async function foods() {
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Eggplant" },
+    update: {},
+    create: {
+      name: "Eggplant",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
         })
       ).id,
     },
