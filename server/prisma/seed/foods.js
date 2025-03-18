@@ -16,6 +16,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Spinach" },
+    update: {},
+    create: {
+      name: "Spinach",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Quinoa" },
     update: {},
     create: {
@@ -562,6 +575,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Sun-Dried Tomatoes" },
+    update: {},
+    create: {
+      name: "Sun-Dried Tomatoes",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Leek" },
     update: {},
     create: {
@@ -813,6 +839,19 @@ async function foods() {
     update: {},
     create: {
       name: "Cocoa Powder",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Chickpeas" },
+    update: {},
+    create: {
+      name: "Chickpeas",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Aisles" },

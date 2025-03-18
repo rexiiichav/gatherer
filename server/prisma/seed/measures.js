@@ -73,6 +73,16 @@ async function measures() {
   });
 
   await prisma.measure.upsert({
+    where: { name: "Ounce(s)" },
+    update: {},
+    create: {
+      name: "Ounce(s)",
+      aggregateByWeight: true,
+      conversion: 1 / 16,
+    },
+  });
+
+  await prisma.measure.upsert({
     where: { name: "Pound(s)" },
     update: {},
     create: {
