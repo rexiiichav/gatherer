@@ -120,6 +120,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Cannellini Beans" },
+    update: {},
+    create: {
+      name: "Cannellini Beans",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Aisles" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Hemp Seeds" },
     update: {},
     create: {
@@ -263,6 +276,19 @@ async function foods() {
   });
 
   await prisma.food.upsert({
+    where: { name: "Red Pepper Flakes" },
+    update: {},
+    create: {
+      name: "Red Pepper Flakes",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Spice" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
     where: { name: "Soy Sauce" },
     update: {},
     create: {
@@ -306,6 +332,19 @@ async function foods() {
     update: {},
     create: {
       name: "Tomato",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Parsley" },
+    update: {},
+    create: {
+      name: "Parsley",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Produce" },
@@ -449,6 +488,19 @@ async function foods() {
     update: {},
     create: {
       name: "Red Bell Pepper",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Produce" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Shallots" },
+    update: {},
+    create: {
+      name: "Shallots",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Produce" },
@@ -657,6 +709,19 @@ async function foods() {
     update: {},
     create: {
       name: "Italian Seasoning",
+      locationId: (
+        await prisma.location.findUnique({
+          where: { name: "Spice" },
+        })
+      ).id,
+    },
+  });
+
+  await prisma.food.upsert({
+    where: { name: "Rosemary" },
+    update: {},
+    create: {
+      name: "Rosemary",
       locationId: (
         await prisma.location.findUnique({
           where: { name: "Spice" },

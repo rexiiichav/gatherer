@@ -8,16 +8,11 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const validateSignUp = [
-  body("username")
-    .trim()
-    .matches(/^[a-z0-9 ]+$/i)
-    .withMessage(`Name Cannot Contain Non-Alphanumeric Characters`)
-    .isLength({ min: 1, max: 100 })
-    .withMessage(`Must Be Between 1 and 100 Characters`),
+  body("username").isEmail(),
   body("password")
     .trim()
-    .isLength({ min: 1, max: 100 })
-    .withMessage(`Must Be Between 1 and 100 Characters`),
+    .isLength({ min: 8, max: 100 })
+    .withMessage(`Must Be Between 8 and 100 Characters`),
   body("confirmPassword")
     .trim()
     .custom((value, { req }) => {

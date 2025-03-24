@@ -8,6 +8,7 @@ exports.recipe_create_post = asyncHandler(async (req, res, next) => {
   let recipe = await prisma.recipe.create({
     data: {
       name: req.body.name,
+      authorId: Number(req.user.id),
     },
   });
   for (let ing of req.body.ingredients) {
@@ -29,6 +30,7 @@ exports.recipe_create_post = asyncHandler(async (req, res, next) => {
 
 exports.recipe_index_get = asyncHandler(async (req, res, next) => {
   const recipes = await prisma.recipe.findMany({
+    where: { authorId: Number(req.user.id) },
     orderBy: [
       {
         name: "asc",
@@ -49,7 +51,13 @@ exports.recipe_show_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
-  let recipe = await prisma.recipe.update({
+  let recipe = await prisma.recipe.findUnique({
+    where: { id: Number(req.params.id) },
+  });
+  if (Number(recipe.authorId) !== Number(req.user.id)) {
+    res.status(401).json({ message: "Not Authorized" });
+  }
+  recipe = await prisma.recipe.update({
     where: { id: Number(req.params.id) },
     data: {
       name: req.body.name,
@@ -76,6 +84,12 @@ exports.recipe_edit_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.recipe_delete_delete = asyncHandler(async (req, res, next) => {
+  let recipe = await prisma.recipe.findUnique({
+    where: { id: Number(req.params.id) },
+  });
+  if (Number(recipe.authorId) !== Number(req.user.id)) {
+    res.status(401).json({ message: "Not Authorized" });
+  }
   await prisma.ingredient.deleteMany({
     where: {
       recipeId: Number(req.params.id),
