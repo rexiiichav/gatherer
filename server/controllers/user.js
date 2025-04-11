@@ -8,17 +8,17 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const validateSignUp = [
-  body("username").isEmail(),
+  body("username").isEmail().withMessage("Username Must Be a Valid Email"),
   body("password")
     .trim()
     .isLength({ min: 8, max: 100 })
-    .withMessage(`Must Be Between 8 and 100 Characters`),
+    .withMessage(`Password Must Be Between 8 and 100 Characters`),
   body("confirmPassword")
     .trim()
     .custom((value, { req }) => {
       return value == req.body.password;
     })
-    .withMessage("Passwords must match"),
+    .withMessage("Passwords Must Match"),
 ];
 
 exports.sign_up_post = [
@@ -26,7 +26,10 @@ exports.sign_up_post = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(409).json({ errors: errors.errors });
+      let messages = errors.errors.map((err) => {
+        return err.msg;
+      });
+      res.status(409).json({ errors: messages });
     } else if (
       await prisma.user.findUnique({
         where: {
@@ -34,17 +37,16 @@ exports.sign_up_post = [
         },
       })
     ) {
-      res.status(409).json({ error: "Username already taken." });
+      res.status(409).json({ errors: ["Username Already Taken"] });
     } else {
       bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         try {
-          let user = await prisma.user.create({
+          await prisma.user.create({
             data: {
               username: req.body.username,
               password: hashedPassword,
             },
           });
-          console.log(user);
         } catch {
           next(err);
         }
@@ -80,10 +82,33 @@ exports.login_post = asyncHandler(async (req, res, next) => {
 
 exports.user_get = asyncHandler(async (req, res, next) => {
   if (req.user) {
-    console.log(req.user);
     return res
       .status(200)
       .json({ username: req.user.username, id: req.user.id });
   }
   return res.status(401);
+});
+
+exports.user_delete = asyncHandler(async (req, res, next) => {
+  let recipes = await prisma.recipe.findMany({
+    where: { authorId: Number(req.user.id) },
+  });
+  for (recipe of recipes) {
+    await prisma.ingredient.deleteMany({
+      where: {
+        recipeId: Number(recipe.id),
+      },
+    });
+    await prisma.recipe.delete({
+      where: {
+        id: Number(recipe.id),
+      },
+    });
+  }
+  await prisma.user.delete({
+    where: {
+      id: Number(req.user.id),
+    },
+  });
+  return res.status(200).json({ message: "success" });
 });

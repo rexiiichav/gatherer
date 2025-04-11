@@ -15,4 +15,10 @@ router.get(
   controller.user_get
 );
 
+router.delete(
+  "/delete",
+  passport.authenticate("jwt", { session: false }),
+  controller.user_delete
+);
+
 module.exports = router;
