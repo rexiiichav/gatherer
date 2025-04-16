@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import UsernameField from "./UsernameField";
 import PasswordField from "./PasswordField";
-import Error from "./Error";
+import Error from "../utility/Error";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router";
 
@@ -33,7 +33,7 @@ export default function LogIn({ url }) {
         setError([...errors, "Username or Password Is Incorrect."]);
       } else if (response.status == 200) {
         response = await response.json();
-        navigate("/", { state: { token: response.token } });
+        navigate("/list/create", { state: { token: response.token } });
         //use Navigate + Location state hooks to send token to next route
       }
     }
@@ -50,8 +50,18 @@ export default function LogIn({ url }) {
   return (
     <div class="flex flex-col justify-center items-center gap-3">
       <img class="w-25" src="/berries.png" alt="" />
+      <h2 class="self-center text-3xl font-semibold whitespace-nowrap dark:text-white">
+        Gatherer
+      </h2>
+      <h1 class="self-center text-lg font-semibold whitespace-nowrap dark:text-white">
+        Create grocery lists, easily.
+      </h1>
       <Error errors={error} />
-      <UsernameField label={"Username"} value={username} set={setUsername} />
+      <UsernameField
+        label={"Email Address"}
+        value={username}
+        set={setUsername}
+      />
       <PasswordField label={"Password"} value={password} set={setPassword} />
       <button
         type="button"

@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import UsernameField from "./UsernameField";
 import PasswordField from "./PasswordField";
-import Error from "./Error";
+import Error from "../utility/Error";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router";
 
@@ -30,27 +30,41 @@ export default function SignUp({ url }) {
         mode: "cors",
       });
 
-      let response = await fetch(req);
-      if (response.status == 409) {
-        setError([...errors, "Username already taken."]);
-      } else if (response.status == 200) {
-        navigate("/login");
-      }
+      fetch(req)
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.status != 200) {
+            setError(response.errors);
+          } else if (response.status == 200) {
+            navigate("/login");
+          }
+        });
     }
   }
 
   let validateForm = (errors) => {
     if (password != confirmPassword) {
-      errors.push("Passwords don't match");
+      errors.push("Passwords Must Match");
       setError(errors);
     }
     return errors;
   };
 
   return (
-    <div class="flex flex-col justify-center items-center gap-3">
+    <div class=" flex flex-col justify-center items-center gap-3">
       <img class="w-25" src="/berries.png" alt="" />
-      <UsernameField label={"Username"} value={username} set={setUsername} />
+      <h2 class="self-center text-3xl font-semibold whitespace-nowrap dark:text-white">
+        Gatherer
+      </h2>
+      <h1 class="self-center text-lg font-semibold whitespace-nowrap dark:text-white">
+        Create grocery lists, easily.
+      </h1>
+      <Error errors={error} />
+      <UsernameField
+        label={"Email Address"}
+        value={username}
+        set={setUsername}
+      />
       <PasswordField label={"Password"} value={password} set={setPassword} />
       <PasswordField
         label={"Confirm Password"}

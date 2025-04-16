@@ -17,23 +17,34 @@ export default function ListDisplay({ url }) {
   });
 
   return (
-    <>
-      {Object.keys(sortFoodsByLocation).map((location) => {
-        return (
-          <div key={location}>
-            <h2>{location}</h2>
-            <ul>
-              {sortFoodsByLocation[location].map((food, index) => {
-                return (
-                  <li key={food.foodId * food.measureId}>
-                    {food.quantity} {food.measure.name} of {food.name}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
-    </>
+    <div class="flex justify-center items-center p-15">
+      <div class="blockmax-w-sm pt-6 pb-6 pr-15 pl-10 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+        <h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          List
+        </h1>
+        <ul>
+          {Object.keys(sortFoodsByLocation).map((location) => {
+            return (
+              <li key={location}>
+                <hr class="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
+
+                <h2 class="mb-2 text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                  {location}
+                </h2>
+                <ul>
+                  {sortFoodsByLocation[location].map((food, index) => {
+                    return (
+                      <li key={food.foodId * food.measureId}>
+                        {food.quantity} {food.measure.name} of {food.name}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
   );
 }

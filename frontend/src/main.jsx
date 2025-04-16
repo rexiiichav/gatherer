@@ -1,12 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import Home from "./routes/Home";
 import ErrorPage from "./error-page";
 import SignUp from "./components/user/SignUp";
 import LogIn from "./components/user/LogIn";
-import Form from "./routes/form";
+import Profile from "./components/user/Profile";
+import Form from "./components/utility/Form";
 import RecipeList from "./components/recipes/RecipeList";
 import RecipeShow from "./components/recipes/RecipeShow";
 import RecipeForm from "./components/recipes/RecipeForm";
@@ -67,7 +72,7 @@ const router = createBrowserRouter([
     path: "/recipe/:id/edit",
     element: (
       <Shell>
-        <RecipeForm url={url} title="Edit Recipe" />
+        <RecipeForm url={url} title="Edit Recipe" key={"edit"} />
       </Shell>
     ),
     errorElement: <ErrorPage />,
@@ -108,6 +113,15 @@ const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/profile",
+    element: (
+      <Shell>
+        <Profile url={url} />
+      </Shell>
+    ),
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
@@ -115,3 +129,6 @@ createRoot(document.getElementById("root")).render(
     <RouterProvider router={router} />
   </StrictMode>
 );
+
+//Find a way to get more foods in the app - https://platform.fatsecret.com/docs/v2/foods.autocomplete
+//Have searches performed on the server-side instead of sending all foods to the client

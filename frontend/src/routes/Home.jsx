@@ -32,40 +32,32 @@ export default function Home({ url }) {
   }, []);
 
   return (
-    <div class=" w-100% min-h-screen flex justify-center items-center">
-      <div class="flex justify-center items-center flex-col gap-5">
-        <img src="wicker-basket.png" class="w-30" alt="" />
-        <h1 class="text-3xl font-bold text-center">
-          Let's get cooking, {username}!
-        </h1>
-        <div
-          id="actions-container"
-          class="flex justify-center items-center gap-5"
-        >
-          <Link to={`/recipes`} state={{ token: location.state.token }}>
-            <button
-              type="button"
-              class="w-35 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-            >
-              View Recipes
-            </button>
-          </Link>
-          <Link to={`/recipe/create`} state={{ token: location.state.token }}>
-            <button
-              type="button"
-              class="w-35 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-            >
-              Create Recipe
-            </button>
-          </Link>
-          <Link to={`/list/create`} state={{ token: location.state.token }}>
-            <button
-              type="button"
-              class="w-35 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-            >
-              Create List
-            </button>
-          </Link>
+    <div class="flex justify-center items-center p-15">
+      <div class="blockmax-w-sm pt-6 pb-6 pr-15 pl-15 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex justify-center items-center flex-col gap-5">
+          <h1 class="mb-5 text-3xl font-bold text-center">Welcome!</h1>
+
+          <h2 class="text-xl font-bold text-center ">Quick Tutorial:</h2>
+          <div class="flex justify-center items-center gap-5">
+            <div class="flex flex-col justify-center items-center gap-2">
+              <img src="recipe.png" alt="" class="w-20" />
+              <h3 class="font-bold text-center">Recipes</h3>
+            </div>
+            <img src="add.png" alt="" class="w-10 h-10" />
+            <div class="flex flex-col justify-center items-center gap-2">
+              <img src="ingredient.png" alt="" class="w-20" />
+              <h3 class="font-bold text-center">Odds & Ends</h3>
+            </div>
+            <img src="equal.png" alt="" class="w-10 h-10" />
+            <div class="flex flex-col justify-center items-center gap-2">
+              <img src="list.png" alt="" class="w-20" />
+              <h3 class="font-bold text-center">Grocery List</h3>
+            </div>
+          </div>
+          <div
+            id="actions-container"
+            class="flex justify-center items-center gap-5"
+          ></div>
         </div>
       </div>
     </div>

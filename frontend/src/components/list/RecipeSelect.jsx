@@ -3,16 +3,16 @@ import { Link } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import RecipeInput from "../list/RecipeInput";
+import Error from "../utility/Error";
 
 export default function RecipeSelect({ url }) {
   let location = useLocation();
   let navigate = useNavigate();
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState(undefined);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
-  //Make it so the recipe selection form works similarly to the standard
-  //recipe form
+  const [error, setError] = useState([]);
+  const errorSection = useRef(null);
   const keyRef = useRef(0);
-  //selectedRecipes needs to be [{},{},{}]
 
   useEffect(() => {
     const header = new Headers();
@@ -91,26 +91,62 @@ export default function RecipeSelect({ url }) {
         key: keyRef.current,
         label: "Select",
         value: undefined,
-        quantity: 0,
+        quantity: "",
       },
     ]);
   }
 
-  return (
-    <>
-      <h1>Select Recipes</h1>
+  useEffect(() => {
+    if (error.length > 0) {
+      errorSection.current.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  }, [error]);
 
-      {selectedRecipes.map((recipe, index) => (
-        <RecipeInput
-          key={recipe.key}
-          index={index}
-          recipes={recipes}
-          selectedRecipes={selectedRecipes}
-          setSelectedRecipes={setSelectedRecipes}
-        ></RecipeInput>
-      ))}
-      <button onClick={addRecipe}>Add Recipe</button>
-      <button onClick={submit}>Create List</button>
-    </>
+  if (recipes == undefined) {
+    return <></>;
+  }
+  return (
+    <div ref={errorSection} class="flex items-center justify-center p-10">
+      <div class="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-4">
+          <h1 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
+            Create List
+          </h1>
+        </div>
+        <Error errors={error} />
+        <div class="flow-root">
+          <ul role="list">
+            {selectedRecipes.map((recipe, index) => (
+              <li>
+                <RecipeInput
+                  key={recipe.key}
+                  index={index}
+                  recipes={recipes}
+                  selectedRecipes={selectedRecipes}
+                  setSelectedRecipes={setSelectedRecipes}
+                ></RecipeInput>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-5 flex flex-col">
+            <button
+              onClick={addRecipe}
+              class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+            >
+              Add Recipe
+            </button>
+
+            <button
+              onClick={submit}
+              class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            >
+              Create List
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
